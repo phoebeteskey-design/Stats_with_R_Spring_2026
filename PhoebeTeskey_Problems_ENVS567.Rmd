@@ -1,0 +1,80 @@
+---
+title: "Problems ENVS567"
+author: "Phoebe Teskey"
+date: "2026-01-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Problem #1
+
+1. Under highly favorable conditions, populations grow exponentially. However resources will eventually limit population growth and exponential growth cannot continue indefinitely. This phenomenon is described by the logistic growth function:
+
+N_t=(KN_0)/〖N_0+(K-N_0)e〗^(-rt) 
+
+where Nt is the population size at time t, N0 is the initial population size, r is the rate of growth or reproductive rate, and K is the carrying capacity.
+
+Write a logistic growth function in R that also generates a plot with time on the x axis and Nt on the y axis. Using that function create 3 separate plots for 20 days assuming an initial population size of 10 individuals and a carrying capacity of 1,000 individuals under 3 growth rate scenarios (0.5, 0.8, 0.4).
+Plot the previous results (that is, 3 growth rate scenarios) in a single plot using ggplot2.
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+
+logistic_growth <- function(pop_size) {
+  pop_size <- (KN_0)/(N_0+(K-N_0)e)^(-rt) 
+  return(pop_size) 
+}
+```
+
+Problem #2
+
+a)	A function (sum_n) that for any given value, say n, computes the sum of the integers from 1 to n (inclusive). Use the function to determine the sum of integers from 1 to 5,000.
+
+
+```{r}
+n <- 1:5000
+
+sum_n <- function(n){
+  sum <- sum(1:length(n))
+  return(sum)
+}
+
+sum_n(n)
+
+```
+b)	A function (sqrt_round) that takes a number x as input, takes the square root, rounds it to the nearest whole number and then returns the result.
+
+```{r}
+sqrt_round <- function(x) {
+  sqrt <- x^(1/2)
+  rounded <- round(sqrt)
+  return(rounded)
+}
+
+sqrt_round(13)
+```
+
