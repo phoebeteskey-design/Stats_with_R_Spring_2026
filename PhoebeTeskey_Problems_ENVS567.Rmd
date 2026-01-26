@@ -96,7 +96,10 @@ ggplot(birds, aes(x = species, y= abundance))+
 
 b)	Calculate the median and the mean. In this particular case, which do you think is the best measure of center, the mean or the median? Why?
 
+In this case, the median is a more accurate representation of the data because we have outliers like the white-winged dove that was seen over 600 times. 
+
 ```{r}
-mean(birds)
+mean(birds$abundance)
+median(birds$abundance)
 ```
 
