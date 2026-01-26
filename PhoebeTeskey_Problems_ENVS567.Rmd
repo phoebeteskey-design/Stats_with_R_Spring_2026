@@ -29,7 +29,7 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-Problem #1
+*Problem #1*
 
 1. Under highly favorable conditions, populations grow exponentially. However resources will eventually limit population growth and exponential growth cannot continue indefinitely. This phenomenon is described by the logistic growth function:
 
@@ -50,7 +50,7 @@ logistic_growth <- function(pop_size) {
 }
 ```
 
-Problem #2
+*Problem #2*
 
 a)	A function (sum_n) that for any given value, say n, computes the sum of the integers from 1 to n (inclusive). Use the function to determine the sum of integers from 1 to 5,000.
 
@@ -76,5 +76,27 @@ sqrt_round <- function(x) {
 }
 
 sqrt_round(13)
+```
+
+*Review of Statistics*
+
+The data in the file DesertBirdAbundance.csv are from a survey of the breeding birds of Organ Pipe Cactus National Monument in southern Arizona.
+
+a)	Draw a histogram of the data.
+
+```{r}
+library(ggplot2)
+birds <- read.csv("data_raw/DesertBirdAbundance.csv")
+str(birds)
+ggplot(birds, aes(x = species, y= abundance))+
+  geom_col()+
+  coord_flip()
+```
+
+
+b)	Calculate the median and the mean. In this particular case, which do you think is the best measure of center, the mean or the median? Why?
+
+```{r}
+mean(birds)
 ```
 
