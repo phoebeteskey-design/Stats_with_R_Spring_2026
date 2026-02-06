@@ -207,9 +207,28 @@ Question: What diet and supplement increases weight in mice after 6 weeks?
 ```{r}
 #Exploratory analyses
 library(ggplot2)
-library(mvabund)
+library(parameters)
 growth <- read.table("data_raw/growth.txt", header = T)
-weight_gain_mice <- lm(gain ~ supplement * diet, data = growth)
+weight_gain_mice <- lm(gain ~ diet * supplement, data = growth)
+plot(parameters(weight_gain_mice))
 
+levels(growth$diet)
+levels(growth$supplement)
+#Reference group cannot be identified?
+
+
+summary(weight_gain_mice)
+
+# library(tidyverse)
+# growth_1 <- growth %>% 
+#   unite("combo", supplement, diet, sep = "_")
+# 
+# combo_plot <- ggplot(growth_1, aes(x = gain, y = combo))+
+#   geom_point()
+# combo_plot
+
+color_plot <- ggplot(growth, aes(x = gain, y = supplement, color = diet))+
+  geom_point()
+color_plot
 ```
 
