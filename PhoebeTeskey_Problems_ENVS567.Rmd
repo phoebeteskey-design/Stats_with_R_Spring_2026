@@ -45,8 +45,8 @@ install.packages("ggplot2")
 library(ggplot2)
 
 logistic_growth <- function(pop_size) {
-  pop_size <- (KN_0)/(N_0+(K-N_0)e)^(-rt)
-  return(pop_size)
+  n_sub_t <- (KN_0)/N_0+((K-N_0)e)^(-rt)
+  return(n_sub_t)
 }
 ```
 
@@ -202,12 +202,14 @@ ggplot(aggression, aes(x = Face, y = Penalty))+
 
 1. Data in growth.txt come from a farm-scale trial of animal diets. There are two factors: diet and supplement. Diet is a factor with three levels: barley, oats and wheat. Supplement is a factor with four levels: agrimore, control, supergain and supersupp. The response variable is weight gain after 6 weeks. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
-Question: What diet increases weight gain in mice?
+Question: What diet and supplement increases weight in mice after 6 weeks?
 
 ```{r}
 #Exploratory analyses
-library(reshape2)
 library(ggplot2)
+library(mvabund)
 growth <- read.table("data_raw/growth.txt", header = T)
+weight_gain_mice <- lm(gain ~ supplement * diet, data = growth)
+
 ```
 
