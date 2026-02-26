@@ -232,3 +232,78 @@ color_plot <- ggplot(growth, aes(x = gain, y = supplement, color = diet))+
 color_plot
 ```
 
+GLMs
+
+1. The data in stork.txt display the stress-induced corticosterone levels circulating in the blood of European white storks and their survival over the subsequent five years of study. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+
+```{r}
+
+```
+
+
+2. The clusters.txt dataset contains the response variable Cancers (the number of reported cancer cases per clinic) and the explanatory variable Distance (the distance from a nuclear plant to the clinic in kilometers). Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+
+1.) Question: Do cancer cases occur more often closer to a nuclear power plant?
+
+```{r}
+#2.) Exploratory analyses
+library(ggplot2)
+cancer <- read.table("data_raw/clusters.txt", header = T)
+
+ggplot(data = cancer, aes(x = Cancers))+
+  geom_histogram(color = "white", fill = "black")
+
+```
+
+3.) Fit model
+
+```{r}
+cancer.glm <- glm(Cancers ~ Distance, data = cancer, family = poisson)
+summary(cancer.glm)
+```
+
+```{r}
+library(DHARMa)
+simulateResiduals(cancer.glm, plot = T)
+```
+
+```{r}
+testDispersion(cancer.glm, plot = T)
+```
+
+```{r}
+library(MASS) #for NB
+cancer.nb <- glm.nb(Cancers ~ Distance, data=cancer)
+summary(cancer.nb)
+```
+
+```{r}
+simulateResiduals(cancer.nb, plot = T)
+```
+
+```{r}
+testDispersion(cancer.nb, plot = T)
+```
+
+```{r}
+anova(cancer.nb, test = "LRT")
+```
+
+```{r}
+library(performance)
+r2(cancer.nb)
+```
+There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19)
+
+```{r}
+library(ggplot2)
+ggplot(data = cancer, aes(x = Cancers, y = Distance)) +
+  geom_jitter(data = cancer, aes(x=Cancers, y=Distance), alpha=0.5, width=0.2)+
+  ylab("Distance from nuclear power plant")+
+  xlab("Cancer cases count")+
+  theme_classic()
+```
+
+
+
+
