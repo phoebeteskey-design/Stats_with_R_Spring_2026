@@ -29,6 +29,12 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+```{r}
+library(ggplot2)
+
+```
+
+
 *Problem #1*
 
 1. Under highly favorable conditions, populations grow exponentially. However resources will eventually limit population growth and exponential growth cannot continue indefinitely. This phenomenon is described by the logistic growth function:
@@ -41,13 +47,55 @@ Write a logistic growth function in R that also generates a plot with time on th
 Plot the previous results (that is, 3 growth rate scenarios) in a single plot using ggplot2.
 
 ```{r}
-install.packages("ggplot2")
-library(ggplot2)
 
-logistic_growth <- function(pop_size) {
-  n_sub_t <- (KN_0)/N_0+((K-N_0)e)^(-rt)
-  return(n_sub_t)
+logistic_growth <- function(t, N0, r, K, plot = TRUE) {
+  Nt <- (K * N0) / (N0 + (K - N0) * exp(-r * t))
+  
+  if (plot) {
+    plot(
+      t, Nt,
+      type = "l",
+      lwd = 2,
+      xlab = "Time (days)",
+      ylab = "Population size (Nt)",
+      main = paste("Logistic Growth (r =", r, ")")
+    )
+  }
+  
+  return(data.frame(time = t, Nt = Nt, r = r))
 }
+
+# Parameters
+time <- 0:20
+N0 <- 10
+K <- 1000
+
+# Growth rate scenarios
+r1 <- 0.5
+r2 <- 0.8
+r3 <- 0.4
+
+# Generate plots
+out1 <- logistic_growth(time, N0, r1, K)
+out2 <- logistic_growth(time, N0, r2, K)
+out3 <- logistic_growth(time, N0, r3, K)
+
+# Combine results into one data frame
+all_results <- rbind(out1, out2, out3)
+
+# Convert r to a factor for nicer legend labels
+all_results$r <- factor(all_results$r)
+
+# Plot
+ggplot(all_results, aes(x = time, y = Nt, color = r)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    x = "Time (days)",
+    y = "Population size (Nt)",
+    color = "Growth rate (r)",
+    title = "Logistic Growth Under Different Growth Rates"
+  ) +
+  theme_minimal()
 ```
 
 *Problem #2*
