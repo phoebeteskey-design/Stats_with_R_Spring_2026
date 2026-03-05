@@ -37,8 +37,10 @@ library(reshape2)
 library(MASS)
 library(lme4)
 library(performance)
-```
+library(modelbased)
+library(car)
 
+```
 
 *Problem #1*
 
@@ -50,6 +52,7 @@ where Nt is the population size at time t, N0 is the initial population size, r 
 
 Write a logistic growth function in R that also generates a plot with time on the x axis and Nt on the y axis. Using that function create 3 separate plots for 20 days assuming an initial population size of 10 individuals and a carrying capacity of 1,000 individuals under 3 growth rate scenarios (0.5, 0.8, 0.4).
 Plot the previous results (that is, 3 growth rate scenarios) in a single plot using ggplot2.
+
 
 ```{r}
 
@@ -260,25 +263,61 @@ growth <- read.table("data_raw/growth.txt", header = T)
 weight_gain_mice <- lm(gain ~ diet * supplement, data = growth)
 plot(parameters(weight_gain_mice))
 
-levels(growth$diet)
-levels(growth$supplement)
-#Reference group cannot be identified?
+ggplot(data = growth, aes(x = diet, y = gain, color = supplement))+
+  geom_boxplot()
 
-
-summary(weight_gain_mice)
-
-# library(tidyverse)
-# growth_1 <- growth %>% 
-#   unite("combo", supplement, diet, sep = "_")
-# 
-# combo_plot <- ggplot(growth_1, aes(x = gain, y = combo))+
-#   geom_point()
-# combo_plot
-
-color_plot <- ggplot(growth, aes(x = gain, y = supplement, color = diet))+
-  geom_point()
-color_plot
 ```
+
+```{r}
+#Fit model
+
+model3 <- lm(gain ~ diet * supplement, data = growth)
+summary(model3)
+
+```
+
+
+```{r}
+#Validate model
+
+check_model(model3, check=c("linearity", "homogeneity", "normality"))
+check_homogeneity(model3)
+plot(check_homogeneity(model3))
+
+```
+
+```{r}
+#Test hypothesis and assess explanatory power
+anova(model3)
+
+```
+
+
+```{r}
+#r^2
+r2(model3)
+
+```
+
+Communication of results (plot + description of main results):
+
+Both diet and supplement had a significant effect on weight gain (F1,36 = 0.9879, p-value = 0.32688), higher amounts of protein (whether from beef or cereal) promoted on average a 20.8 increase in weight (F1,36 = 5.8123, p-value = 0.02114). There was not enough evidence of a significant interaction between protein source and amount (F1,36 = 3.9518, p-value = 0.05447).
+
+```{r}
+model3.means <- estimate_means(model3)
+amount.means <- estimate_means(model3, by = "diet")
+
+ggplot(data = model3.means, aes(x = diet, y = Mean, color=supplement)) +
+  geom_pointrange(aes(ymin = CI_low, ymax = CI_high), position=position_dodge(width=0.5), size=0.5) +
+  geom_pointrange(data=amount.means, aes(ymin = CI_low, ymax = CI_high), position=position_dodge(width=0.5), size=1.5, color="black") +
+  geom_jitter(data = growth, aes(x=diet, y=gain, color=supplement), alpha=0.6, size=1.5,
+              position=position_jitterdodge(jitter.width = 0.2))+
+  scale_color_manual(values = c("firebrick4", "dodgerblue3", "forestgreen", "darkorchid4"))+
+  ylab("Weight (g)")+
+  xlab(NULL)+
+  theme_classic()
+```
+
 
 GLMs
 
