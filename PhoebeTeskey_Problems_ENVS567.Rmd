@@ -31,7 +31,12 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r}
 library(ggplot2)
-
+library(DHARMa)
+library(parameters)
+library(reshape2)
+library(MASS)
+library(lme4)
+library(performance)
 ```
 
 
@@ -133,7 +138,6 @@ The data in the file DesertBirdAbundance.csv are from a survey of the breeding b
 *Problem 1*:	Draw a histogram of the data.
 
 ```{r}
-library(ggplot2)
 birds <- read.csv("data_raw/DesertBirdAbundance.csv")
 str(birds)
 birds_plot <- ggplot(birds, aes(x = species, y= abundance))+
@@ -197,8 +201,6 @@ There clearly seems to be a habitat preference for oak, maple and hickory trees.
 a)	Transform the data from wide to long format.
 
 ```{r}
-install.packages("reshape2")
-library(reshape2)
 kudzu <- read.csv("data_raw/data_ANOVA.csv")
 kudzu_long <- melt(kudzu)
 ```
@@ -253,8 +255,7 @@ Question: What diet and supplement increases weight in mice after 6 weeks?
 
 ```{r}
 #Exploratory analyses
-library(ggplot2)
-library(parameters)
+
 growth <- read.table("data_raw/growth.txt", header = T)
 weight_gain_mice <- lm(gain ~ diet * supplement, data = growth)
 plot(parameters(weight_gain_mice))
@@ -294,7 +295,7 @@ GLMs
 
 ```{r}
 #2.) Exploratory analyses
-library(ggplot2)
+
 cancer <- read.table("data_raw/clusters.txt", header = T)
 
 ggplot(data = cancer, aes(x = Cancers))+
@@ -310,7 +311,7 @@ summary(cancer.glm)
 ```
 
 ```{r}
-library(DHARMa)
+
 simulateResiduals(cancer.glm, plot = T)
 ```
 
@@ -319,7 +320,7 @@ testDispersion(cancer.glm, plot = T)
 ```
 
 ```{r}
-library(MASS) #for NB
+
 cancer.nb <- glm.nb(Cancers ~ Distance, data=cancer)
 summary(cancer.nb)
 ```
@@ -337,13 +338,11 @@ anova(cancer.nb, test = "LRT")
 ```
 
 ```{r}
-library(performance)
 r2(cancer.nb)
 ```
 There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19)
 
 ```{r}
-library(ggplot2)
 ggplot(data = cancer, aes(x = Cancers, y = Distance)) +
   geom_jitter(data = cancer, aes(x=Cancers, y=Distance), alpha=0.5, width=0.2)+
   ylab("Distance from nuclear power plant")+
@@ -372,7 +371,7 @@ d)	Write the R code that you would use to analyze these data.
 
 
 ```{r}
-library(lme4)
+
 estuary <- read.csv("data_raw/Estuaries.csv", header = T)
 
 estuary.glm <- glmer(Total ~ Modification + (1|Estuary), family = poisson(link = "log"), estuary)
