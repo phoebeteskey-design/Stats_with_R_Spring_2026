@@ -229,13 +229,12 @@ b)	Does face shape predict aggression? Write the result in the form of an equati
 aggression_prediction <- lm(Penalty ~ Face, data = aggression)
 summary(aggression_prediction)
 ```
+
 y = 3.189x - 4.505
 
 c)	What is the variation explained?
 
-```{r}
-
-```
+The variation explained is represented by the R^2 value, which is .29. This means that about 29% of the variation in penalty minutes can be explained by the face width-to-height ratio.
 
 d)	Make a scatterplot of the data and include the linear regression line in the plot.
 
