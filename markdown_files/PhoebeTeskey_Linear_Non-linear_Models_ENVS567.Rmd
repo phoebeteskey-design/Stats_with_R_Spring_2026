@@ -6,11 +6,15 @@ output: html_document
 
 ```{r}
 library(ggplot2)
-
+library(easystats)
 library(DHARMa)
-library(parameters)
 library(MASS)
 library(lme4)
+
+
+library(parameters)
+
+
 library(performance)
 library(modelbased)
 library(car)
@@ -28,7 +32,7 @@ Question: What diet and supplement increases weight in mice after 6 weeks?
 ```{r}
 #Exploratory analyses
 
-growth <- read.table("data_raw/growth.txt", header = T)
+growth <- read.table("../data_raw/growth.txt", header = T)
 weight_gain_mice <- lm(gain ~ diet * supplement, data = growth)
 plot(parameters(weight_gain_mice))
 
@@ -93,7 +97,7 @@ Respiratory rate (Y) is expected to depend on body mass (X) by the power law, Y=
 a)	Analyze the data by transforming the data and then fit a linear model.
 
 ```{r}
-breathe <- read.table("data_raw/respiratoryrate_bodymass.txt")
+breathe <- read.table("../data_raw/respiratoryrate_bodymass.txt")
 ```
 
 
@@ -114,7 +118,7 @@ GLMs
 ```{r}
 #2.) Exploratory analyses
 
-cancer <- read.table("data_raw/clusters.txt", header = T)
+cancer <- read.table("../data_raw/clusters.txt", header = T)
 
 ggplot(data = cancer, aes(x = Cancers))+
   geom_histogram(color = "white", fill = "black")
@@ -129,7 +133,6 @@ summary(cancer.glm)
 ```
 
 ```{r}
-
 simulateResiduals(cancer.glm, plot = T)
 ```
 
@@ -190,7 +193,7 @@ d)	Write the R code that you would use to analyze these data.
 
 ```{r}
 
-estuary <- read.csv("data_raw/Estuaries.csv", header = T)
+estuary <- read.csv("../data_raw/Estuaries.csv", header = T)
 
 estuary.glm <- glmer(Total ~ Modification + (1|Estuary), family = poisson(link = "log"), estuary)
 
