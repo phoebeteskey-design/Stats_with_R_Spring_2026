@@ -31,15 +31,7 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r}
 library(ggplot2)
-library(DHARMa)
-library(parameters)
 library(reshape2)
-library(MASS)
-library(lme4)
-library(performance)
-library(modelbased)
-library(car)
-library(ecostats)
 
 ```
 
@@ -142,7 +134,7 @@ The data in the file DesertBirdAbundance.csv are from a survey of the breeding b
 *Problem 1*:	Draw a histogram of the data.
 
 ```{r}
-birds <- read.csv("data_raw/DesertBirdAbundance.csv")
+birds <- read.csv("../data_raw/DesertBirdAbundance.csv")
 str(birds)
 birds_plot <- ggplot(birds, aes(x = species, y= abundance))+
   geom_col()+
@@ -205,7 +197,7 @@ There clearly seems to be a habitat preference for oak, maple and hickory trees.
 a)	Transform the data from wide to long format.
 
 ```{r}
-kudzu <- read.csv("data_raw/data_ANOVA.csv")
+kudzu <- read.csv("../data_raw/data_ANOVA.csv")
 kudzu_long <- melt(kudzu)
 ```
 
@@ -225,7 +217,7 @@ This does not indicate a significant result.
 a)	Calculate the correlation coefficient.
 
 ```{r}
-aggression <- read.table("data_raw/face.txt", header = T, sep = "\t")
+aggression <- read.table("../data_raw/face.txt", header = T, sep = "\t")
 cor(x = aggression$Face, y = aggression$Penalty)
 ```
 
