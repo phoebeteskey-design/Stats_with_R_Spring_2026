@@ -1,5 +1,5 @@
 ---
-title: "Problems ENVS567"
+title: "Problems ENVS567 Review of Statistics"
 author: "Phoebe Teskey"
 date: "2026-01-22"
 output: html_document
@@ -39,6 +39,7 @@ library(lme4)
 library(performance)
 library(modelbased)
 library(car)
+library(ecostats)
 
 ```
 
@@ -301,7 +302,7 @@ r2(model3)
 
 Communication of results (plot + description of main results):
 
-Both diet and supplement had a significant effect on weight gain (F1,36 = 0.9879, p-value = 0.32688), higher amounts of protein (whether from beef or cereal) promoted on average a 20.8 increase in weight (F1,36 = 5.8123, p-value = 0.02114). There was not enough evidence of a significant interaction between protein source and amount (F1,36 = 3.9518, p-value = 0.05447).
+No significant interaction between diet and supplement. The effect of the supplements was consistent across diets. Type of diet was significant, (F2,36 = 83.52, p < 0.001) and the barley diet had a higher gain than barley or wheat. The supplement was also significant, (F3,36 = 17.8, p < 0.001). The model accounted for 82% of the variance in weight gain, (R2 = 0.82) with standard error at 1.31.
 
 ```{r}
 model3.means <- estimate_means(model3)
@@ -312,11 +313,21 @@ ggplot(data = model3.means, aes(x = diet, y = Mean, color=supplement)) +
   geom_pointrange(data=amount.means, aes(ymin = CI_low, ymax = CI_high), position=position_dodge(width=0.5), size=1.5, color="black") +
   geom_jitter(data = growth, aes(x=diet, y=gain, color=supplement), alpha=0.6, size=1.5,
               position=position_jitterdodge(jitter.width = 0.2))+
-  scale_color_manual(values = c("firebrick4", "dodgerblue3", "forestgreen", "darkorchid4"))+
+  scale_color_manual(values = c("firebrick4", "dodgerblue3", "green", "orange"))+
   ylab("Weight (g)")+
   xlab(NULL)+
   theme_classic()
 ```
+
+Question #2:
+Respiratory rate (Y) is expected to depend on body mass (X) by the power law, Y=aX, where  is the scaling exponent. The data are available in respiratoryrate_bodymass.txt.
+
+a)	Analyze the data by transforming the data and then fit a linear model.
+
+```{r}
+breathe <- read.table("data_raw/respiratoryrate_bodymass.txt")
+```
+
 
 
 GLMs
