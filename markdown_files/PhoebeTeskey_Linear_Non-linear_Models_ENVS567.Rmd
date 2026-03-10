@@ -291,6 +291,82 @@ ggplot(CO2, aes(y=uptake, x=conc, color=Treatment))+
 ```
 
 
+*Question 6*: Use the jaws.txt data (age explanatory, bone response).
+
+	Perform a non-linear regression assuming an asymptotic exponential relationship: y=a(1-e^(-cx))
+
+	Perform a non-linear regression assuming a Michaelis-Menten model: y=ax/(1+bx)
+
+	Estimate the percentage of variation explained by both models (comparing them with a null model with only a constant).
+
+	Compare both models using AIC.
+
+	Make a scatterplot of the data and include both regression lines.
+
+
+```{r}
+jaws <- read.table("../data_raw/jaws.txt", header = T)
+
+jaws.asymp<-nls(bone~a*age/(b+age), start=list(a=100, b=0.1), data=jaws)
+summary(jaws.asymp)
+```
+
+
+```{r}
+summary(nls(bone ~ SSmicmen(age, a, b), data=jaws))
+```
+
+
+```{r}
+rss<-13.9^2*51 # residual sum of squares
+
+null<-lm(bone~1, data=jaws) # null model with only a constant
+summary(null)
+```
+
+
+```{r}
+tss<-31.01^2*52 # total sum of squares
+
+100*(tss-rss)/tss
+```
+
+
+```{r}
+fit_mm <- nls(bone ~ a * age / (1 + b * age), 
+              data = jaws, 
+              start = list(a = 20, b = 0.1))
+
+aic_asymp <- AIC(jaws.asymp)
+aic_mm <- AIC(fit_mm)
+
+summary(aic_asymp)
+summary(aic_mm)
+```
+
+
+```{r}
+
+
+age_range <- data.frame(age = seq(min(jaws$age), max(jaws$age), length.out = 200))
+
+age_range$asymp_pred <- predict(fit_asymp, newdata = age_range)
+age_range$mm_pred <- predict(fit_mm, newdata = age_range)
+
+ggplot(jaws, aes(x = age, y = bone)) +
+  geom_point(alpha = 0.6, color = "darkgrey") +
+  # Add Asymptotic Exponential line
+  geom_line(data = age_range, aes(y = asymp_pred, color = "Asymptotic Exponential"), size = 1) +
+  # Add Michaelis-Menten line
+  geom_line(data = age_range, aes(y = mm_pred, color = "Michaelis-Menten"), size = 1, linetype = "dashed") +
+  # Formatting
+  scale_color_manual(name = "Models", values = c("Asymptotic Exponential" = "red", "Michaelis-Menten" = "blue")) +
+  labs(title = "Bone Growth vs. Age: Model Comparison",
+       x = "Age",
+       y = "Bone") +
+  theme_minimal()
+```
+
 
 
 GLMs
