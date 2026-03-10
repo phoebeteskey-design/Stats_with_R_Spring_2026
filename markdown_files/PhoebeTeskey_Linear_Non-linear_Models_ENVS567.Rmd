@@ -11,12 +11,14 @@ library(DHARMa)
 library(MASS)
 library(lme4)
 library(ecostats)
+library(GGally)
+library(car)
 
 
 library(parameters)
 library(performance)
 library(modelbased)
-library(car)
+
 
 ```
 
@@ -157,12 +159,74 @@ ggplot(data=diminish, aes(x=xv, y=yv))+
 ```
 
 
+*Question 4* Use the ozone.txt data to model the ozone concentration as a linear additive (no interactions) function of wind speed, air temperature and the intensity of solar radiation.
+
+a)	Make a pairwise scatterplot and assess the collinearity of the explanatory variables
+
+```{r}
+ozone <- read.table("../data_raw/ozone.txt", header = T)
+
+ggpairs(ozone)
+```
 
 
+```{r}
+ozone.lm <- lm(ozone ~ rad+temp+wind, data=ozone)
+summary(ozone.lm)
+```
+
+```{r}
+check_model(ozone.lm, check=c("linearity", "homogeneity", "normality"))
+```
+
+```{r}
+check_collinearity(ozone.lm)
+```
 
 
+```{r}
+plot(check_collinearity(ozone.lm))
+```
 
 
+```{r}
+anova(ozone.lm)
+```
+
+
+```{r}
+anova(lm(ozone ~ wind+rad+temp, data=ozone))
+```
+
+
+```{r}
+anova(lm(ozone ~ wind+temp+rad, data=ozone))
+```
+
+
+```{r}
+Anova(ozone.lm, type = 2)
+```
+
+
+```{r}
+r2(ozone.lm)
+```
+
+We explored the linear relationships between Ozone, Radiation, Wind and Temperature. Temperature and Radiation variables were positively associated with higher ozone levels (p-values < 0.05). Overall, our multiple regression model explained 60% (adjusted R2) of the variability in Ozone levels.
+
+
+```{r}
+plot(parameters(ozone.lm))
+```
+
+
+```{r}
+plot(parameters(ozone.lm, standardize = "refit"))
+```
+
+
+*Question 5:* Use data(CO2) and assess the effects of the variables Treatment (categorical) and conc (ambient concentration, numerical) on the response uptake. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
 
 
