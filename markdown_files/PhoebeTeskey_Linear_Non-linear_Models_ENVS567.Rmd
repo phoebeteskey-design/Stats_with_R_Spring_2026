@@ -228,6 +228,68 @@ plot(parameters(ozone.lm, standardize = "refit"))
 
 *Question 5:* Use data(CO2) and assess the effects of the variables Treatment (categorical) and conc (ambient concentration, numerical) on the response uptake. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
+Question: Does ambient concentration of CO2 and treatment type affect uptake of CO2 in plants?
+
+```{r}
+#Exploratory analyses
+
+data(CO2)
+
+ggplot(CO2, aes(x = uptake, y = conc, color = Treatment)) +
+  geom_point()
+
+```
+
+
+```{r}
+#Fit model
+
+model4 <- lm(uptake ~ Treatment * conc, data = CO2)
+summary(model4)
+
+```
+
+
+```{r}
+#Validate model
+
+check_model(model4, check=c("linearity", "homogeneity", "normality"))
+
+
+```
+
+
+```{r}
+#Test hypothesis and assess explanatory power
+
+anova(model4)
+
+```
+
+
+```{r}
+Anova(model4)
+```
+
+```{r}
+r2(model4)
+```
+
+Communicate Results:
+There was not enough evidence of different relationships between concentration of CO2 and uptake of CO2 among treatment types (F1,80 = 0.4, p-value = 0.5297). The chilled treatment type have on average 5 less units of CO2 than the nonchilled treatment type (F1,80 = 74.1267, p-value < 0.001). There was a positive relationship between concentration of CO2 and uptake of CO2 (b = 0.0198, F1, 80 = 28.5535, p value < 0.001).  Overall, the model explained 31% of the variance in uptake of CO2.
+
+
+```{r}
+#Communicate results with a plot
+ggplot(CO2, aes(y=uptake, x=conc, color=Treatment))+
+  geom_point()+
+  geom_smooth(method = "lm", se = T)+
+  scale_color_manual(values = c("green", "pink"))+
+  ylab("Uptake of CO2")+
+  xlab("Concentration of CO2")+
+  theme_classic()
+```
+
 
 
 
