@@ -10,22 +10,21 @@ library(easystats)
 library(DHARMa)
 library(MASS)
 library(lme4)
+library(ecostats)
 
 
 library(parameters)
-
-
 library(performance)
 library(modelbased)
 library(car)
-library(ecostats)
+
 ```
 
 
 
 *Linear (and non-linear) Models*
 
-1. Data in growth.txt come from a farm-scale trial of animal diets. There are two factors: diet and supplement. Diet is a factor with three levels: barley, oats and wheat. Supplement is a factor with four levels: agrimore, control, supergain and supersupp. The response variable is weight gain after 6 weeks. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+*Question 1:* Data in growth.txt come from a farm-scale trial of animal diets. There are two factors: diet and supplement. Diet is a factor with three levels: barley, oats and wheat. Supplement is a factor with four levels: agrimore, control, supergain and supersupp. The response variable is weight gain after 6 weeks. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
 Question: What diet and supplement increases weight in mice after 6 weeks?
 
@@ -91,14 +90,59 @@ ggplot(data = model3.means, aes(x = diet, y = Mean, color=supplement)) +
   theme_classic()
 ```
 
-Question #2:
+*Question #2:*
 Respiratory rate (Y) is expected to depend on body mass (X) by the power law, Y=aX, where  is the scaling exponent. The data are available in respiratoryrate_bodymass.txt.
 
 a)	Analyze the data by transforming the data and then fit a linear model.
 
 ```{r}
-breathe <- read.table("../data_raw/respiratoryrate_bodymass.txt")
+breathe <- read.table("../data_raw/respiratoryrate_bodymass.txt", header = T)
+breathe$logBodyMass <- log(breathe$BodyMass)
+breathe$logRespiration <- log(breathe$Respiration)
+
+fit.log <- lm(logRespiration ~ logBodyMass, data = breathe)
+summary(fit.log)
+
 ```
+
+For every 1% increase in body mass, the respiratory rate increases by approximately 0.86%
+
+```{r}
+ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
+  geom_point()+
+  geom_smooth(method ="lm", se = T, color = "red")+
+  scale_y_continuous(trans = "log")+
+  theme_classic()
+```
+
+
+```{r}
+ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
+  geom_point()+
+  geom_smooth(color= "red", method = "glm", method.args = list(family = gaussian(link = 'log')))+
+  theme_classic()
+```
+
+
+*Question 3:* Use the diminish.txt data (xv is explanatory, yv is response variable) to perform a simple linear regression and a polynomial (second-degree) regression.
+
+a)	Compare both models and decide which model seems to be better?
+
+b)	Make a scatterplot and include both regression lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
