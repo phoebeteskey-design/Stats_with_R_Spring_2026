@@ -124,16 +124,37 @@ ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
 ```
 
 
-*Question 3:* Use the diminish.txt data (xv is explanatory, yv is response variable) to perform a simple linear regression and a polynomial (second-degree) regression.
+*Question 3:* Use the diminish.txt data (xv is explanatory (independent), yv is response variable (dependent)) to perform a simple linear regression and a polynomial (second-degree) regression.
 
 a)	Compare both models and decide which model seems to be better?
 
 b)	Make a scatterplot and include both regression lines.
 
 
+```{r}
+diminish <- read.table("../data_raw/diminish.txt", header = T)
 
+fit.lm <- lm(yv ~ xv, data=diminish)
 
+fit.poly <- lm(yv ~ xv + I(xv^2), data=diminish)
+summary(fit.poly)
+```
 
+```{r}
+anova(fit.lm, fit.poly, test='LRT')
+```
+
+```{r}
+compare_performance(fit.lm, fit.poly)
+```
+
+```{r}
+ggplot(data=diminish, aes(x=xv, y=yv))+
+  geom_point()+
+  geom_smooth(method = "lm", se = T, color = "red")+
+  geom_smooth(method = "lm", formula = y ~ poly(x,2), se = T)+
+  theme_classic()
+```
 
 
 
