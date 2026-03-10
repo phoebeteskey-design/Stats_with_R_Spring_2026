@@ -5,9 +5,11 @@ output: html_document
 
 ```{r}
 library(ggplot2)
-library(easystats)
 library(DHARMa)
 library(MASS)
+library(easystats)
+
+
 library(lme4)
 library(ecostats)
 library(GGally)
@@ -23,6 +25,8 @@ GLMs
 1. The data in stork.txt display the stress-induced corticosterone levels circulating in the blood of European white storks and their survival over the subsequent five years of study. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
 ```{r}
+
+
 
 ```
 
@@ -77,52 +81,13 @@ anova(cancer.nb, test = "LRT")
 ```{r}
 r2(cancer.nb)
 ```
-There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19)
+There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19). The model explained 2.7% of the variance.
 
 ```{r}
-ggplot(data = cancer, aes(x = Cancers, y = Distance)) +
-  geom_jitter(data = cancer, aes(x=Cancers, y=Distance), alpha=0.5, width=0.2)+
-  ylab("Distance from nuclear power plant")+
-  xlab("Cancer cases count")+
+ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
+  geom_point()+
+  geom_smooth(method = "glm", method.args = list(family = "poisson"), color = "red") +
+  labs(x =  "Distance from nuclear power plant", y = "Cancer cases count")+
   theme_classic()
 ```
-
-Mixed models
-
-1. Researchers at the University of Arizona want to assess the germination rate of saguaros using a factorial design, with 3 levels of soil type (remnant, cultivated and restored) and 2 levels of sterilization (yes or no). The same experimental design was deployed in 4 different greenhouses. Each of the unique treatments was replicated in 5 pots. 6 seeds were planted in each pot.
-
-a)	How many fixed treatments (unique combinations) exist?
-
-b)	What is the total number of pots?
-
-c)	What is the total number of plants measured?
-
-d)	Write the R code that you would use to analyze these data.
-
-```{r}
-
-```
-
-
-2. Use Estuaries.csv to model the counts of invertebrate species (Total) between modified or pristine estuaries (Mod) including Estuary as random effects (only intercepts). Then fit the same model but now also including Site in the random effects. Select between both models parsimoniously. Communication your results (plot + description of main results).
-
-
-```{r}
-
-estuary <- read.csv("../data_raw/Estuaries.csv", header = T)
-
-estuary.glm <- glmer(Total ~ Modification + (1|Estuary), family = poisson(link = "log"), estuary)
-
-estuary.glm.random <- glmer(Total ~ Modification + (1|Estuary) + (1|Estuary:Site), family = poisson(link = "log"), estuary)
-summary(estuary.glm.random)
-
-anova(estuary.glm, estuary.glm.random, test = "LRT")
-
-r2(estuary.glm)
-r2(estuary.glm.random)
-
-
-
-```
-
 

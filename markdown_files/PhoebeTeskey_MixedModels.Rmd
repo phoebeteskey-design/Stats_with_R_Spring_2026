@@ -1,0 +1,44 @@
+---
+title: "PhoebeTeskey_MixedModels"
+output: html_document
+---
+
+Mixed models
+
+1. Researchers at the University of Arizona want to assess the germination rate of saguaros using a factorial design, with 3 levels of soil type (remnant, cultivated and restored) and 2 levels of sterilization (yes or no). The same experimental design was deployed in 4 different greenhouses. Each of the unique treatments was replicated in 5 pots. 6 seeds were planted in each pot.
+
+a)	How many fixed treatments (unique combinations) exist?
+
+b)	What is the total number of pots?
+
+c)	What is the total number of plants measured?
+
+d)	Write the R code that you would use to analyze these data.
+
+```{r}
+
+```
+
+
+2. Use Estuaries.csv to model the counts of invertebrate species (Total) between modified or pristine estuaries (Mod) including Estuary as random effects (only intercepts). Then fit the same model but now also including Site in the random effects. Select between both models parsimoniously. Communication your results (plot + description of main results).
+
+
+```{r}
+
+estuary <- read.csv("../data_raw/Estuaries.csv", header = T)
+
+estuary.glm <- glmer(Total ~ Modification + (1|Estuary), family = poisson(link = "log"), estuary)
+
+estuary.glm.random <- glmer(Total ~ Modification + (1|Estuary) + (1|Estuary:Site), family = poisson(link = "log"), estuary)
+summary(estuary.glm.random)
+
+anova(estuary.glm, estuary.glm.random, test = "LRT")
+
+r2(estuary.glm)
+r2(estuary.glm.random)
+
+
+
+```
+
+
