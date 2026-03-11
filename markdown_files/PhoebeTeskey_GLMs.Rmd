@@ -8,9 +8,9 @@ library(ggplot2)
 library(DHARMa)
 library(MASS)
 library(easystats)
-
-
 library(lme4)
+
+
 library(ecostats)
 library(GGally)
 library(car)
@@ -137,4 +137,34 @@ ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
   labs(x =  "Distance from nuclear power plant", y = "Cancer cases count")+
   theme_classic()
 ```
+
+3. Use data(cbpp) from library(lme4) to model the number of cases of cattle plague (incidence) as a function of period. Control for herd size in your model. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+
+Question: Is the number of cases of cattle plague influenced by time period or herd size?
+
+```{r}
+#Exploratory analyses
+plague <- cbpp
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
