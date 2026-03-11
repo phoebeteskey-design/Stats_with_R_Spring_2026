@@ -24,10 +24,49 @@ GLMs
 
 1. The data in stork.txt display the stress-induced corticosterone levels circulating in the blood of European white storks and their survival over the subsequent five years of study. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
+Question: Does corticosterone level predict survival of European white storks over a period of 5 years?
+
 ```{r}
+#Exploratory analyses
+stork <- read.table("../data_raw/stork.txt", header = T)
+
+ggplot(stork, aes(x = Corticosterone, y = Survival))+
+  geom_point()
 
 
+```
 
+Fit Model:
+
+```{r}
+stork.glm<-glm(Survival ~ Corticosterone, family=binomial(link="logit"), data = stork)
+summary(stork.glm)
+```
+
+Validate Model:
+
+```{r}
+simulateResiduals(stork.glm, plot = T)
+```
+
+Test hypothesis and assess explanatory power:
+
+```{r}
+anova(stork.glm, test = "LRT")
+```
+
+```{r}
+r2(stork.glm)
+```
+
+Communicate results:
+Animals with lower corticosterone levels have a higher rate of survival (-0.07980, Chisq = 3.8382, p-value 0.0501). The model explained 10% of the variance.
+
+```{r}
+ggplot(aes(x=Corticosterone, y=Survival), data=stork)+
+  geom_point(size = 2, alpha = 0.9)+
+  geom_smooth(method=glm, method.args = list(family = "binomial"), se=T)+
+  theme_classic()
 ```
 
 
@@ -52,6 +91,8 @@ cancer.glm <- glm(Cancers ~ Distance, data = cancer, family = poisson)
 summary(cancer.glm)
 ```
 
+Validate Model:
+
 ```{r}
 simulateResiduals(cancer.glm, plot = T)
 ```
@@ -65,6 +106,8 @@ testDispersion(cancer.glm, plot = T)
 cancer.nb <- glm.nb(Cancers ~ Distance, data=cancer)
 summary(cancer.nb)
 ```
+
+Test hypotheses and assess explanatory power:
 
 ```{r}
 simulateResiduals(cancer.nb, plot = T)
@@ -81,7 +124,11 @@ anova(cancer.nb, test = "LRT")
 ```{r}
 r2(cancer.nb)
 ```
-There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19). The model explained 2.7% of the variance.
+
+Communicate Results:
+
+There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19). The model explained 2.7% of the variance. Based on these results, we cannot conclude that living closer to a power plant increases the number of reported cancer cases.
+
 
 ```{r}
 ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
