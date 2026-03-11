@@ -9,11 +9,14 @@ library(DHARMa)
 library(MASS)
 library(easystats)
 library(lme4)
+library(glmmTMB)
+library(car)
+
 
 
 library(ecostats)
 library(GGally)
-library(car)
+
 library(parameters)
 library(performance)
 library(modelbased)
@@ -199,14 +202,113 @@ ggplot(pred.farm, aes(x=herd, y=Predicted, group=period))+
 
 *Question 4:* Use insects.csv to model the number of insects (count) as an additive function (no interaction) of habitat (categorical) and flowers (numerical). Previous studies have reported that habitat quality tends to drive the detection of insects (some habitats have no insects regardless of flowers). Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
+Question: Is the number of insects counted correlated with habitat type and number of flowers present?
+
+```{r}
+#Exploratory analyses
+insects <- read.csv("../data_raw/insects.csv", header = T)
+
+insects$flowers <- as.factor(insects$flowers)
+
+ggplot(insects, aes(x = flowers, y = count)) +
+  geom_point(alpha = 0.6) +
+  facet_wrap(~habitat)
+```
 
 
+Fit Model
+
+```{r}
+insect.model <- glm(count ~ habitat + flowers,
+             family = poisson(link = "log"),
+             data = insects)
+
+summary(insect.model)
+```
+
+Validate Model
+
+```{r}
+simulateResiduals(insect.model, plot = T)
+```
+
+```{r}
+testDispersion(insect.model, plot = T)
+```
 
 
+```{r}
+insect.nb <- glm.nb(count ~ habitat + flowers, data = insects)
+summary(insect.nb)
+```
+
+```{r}
+simulateResiduals(insect.nb, plot = T)
+```
 
 
+```{r}
+testDispersion(insect.nb, plot = T)
+```
+
+```{r}
+insect_nbzi<-glmmTMB(count ~ habitat + flowers, ziformula = ~habitat, family=nbinom1, data=insects)
+summary(insect_nbzi)
+```
+
+```{r}
+testDispersion(insect_nbzi, plot = T)
+```
+
+```{r}
+simulateResiduals(insect_nbzi, plot = T)
+```
 
 
+Test hypotheses and assess explanatory power:
+
+```{r}
+drop1(insect_nbzi, test = "Chisq")
+```
+
+
+```{r}
+Anova(insect_nbzi, type = 2, test = "Chisq")
+```
+
+```{r}
+r2(insect_nbzi)
+```
+
+Communicate Results: Insect abundance varied significantly as a function of both habitat type and flower abundance. Habitat had a significant effect on insect counts (p < 0.001). Flower abundance was also a significant predictor of insect count (p < 0.001). The model explained 96% of the variability in insect count.
+
+
+```{r}
+
+pred <- estimate_relation(insect_nbzi, length = 100)
+
+
+ggplot(pred, aes(x = flowers, y = Predicted)) +
+  
+  geom_ribbon(aes(ymin = CI_low, ymax = CI_high),
+              fill = "firebrick4",
+              alpha = 0.2) +
+  
+  geom_line(color = "firebrick4", linewidth = 1.5) +
+  
+  geom_point(data = insects,
+             aes(x = flowers, y = count),
+             color = "black",
+             alpha = 0.6,
+             position = position_jitter(width = 0.2, height = 0.2)) +
+  
+  facet_wrap(~habitat) +
+  
+  ylab("Number of insects") +
+  xlab("Number of flowers") +
+  
+  theme_classic()
+```
 
 
 
