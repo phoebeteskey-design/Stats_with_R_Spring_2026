@@ -138,7 +138,7 @@ ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
   theme_classic()
 ```
 
-3. Use data(cbpp) from library(lme4) to model the number of cases of cattle plague (incidence) as a function of period. Control for herd size in your model. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+*Question 3:* Use data(cbpp) from library(lme4) to model the number of cases of cattle plague (incidence) as a function of period. Control for herd size in your model. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
 Question: Is the number of cases of cattle plague influenced by time period or herd size?
 
@@ -146,16 +146,58 @@ Question: Is the number of cases of cattle plague influenced by time period or h
 #Exploratory analyses
 plague <- cbpp
 
+ggplot(plague, aes(x = incidence, y = size))+
+  geom_point()
+
+ggplot(plague, aes(x = incidence, y = period))+
+  geom_point()
 
 ```
 
+Fit Model
+```{r}
+plague_glmm <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd), 
+                    data = plague, 
+                    family = binomial)
+summary(plague_glmm)
+```
+
+Validate Model
+```{r}
+simulateResiduals(plague_glmm, plot = T)
+```
+
+Test hypothesis and assess explanatory power:
+
+```{r}
+drop1(plague_glmm, test = "Chisq")
+```
+
+```{r}
+r2(plague_glmm)
+```
+
+Communicate Results: The model revealed a significant primary effect of period on disease incidence (chisq = 25.61, df = 3, p < 0.001). All subsequent periods after baseline (Period 1) showed a marked reduction in the probability of infection.
+
+```{r}
+pred <- estimate_relation(plague_glmm) #modelbased
+pred.farm <- estimate_relation(plague_glmm, include_random = T)
+
+ggplot(pred.farm, aes(x=herd, y=Predicted, group=period))+
+  geom_line(color="darkgrey", alpha=0.6)+
+  geom_point(data = plague, aes(x=herd, y=size, color = period), size=0.9, alpha=0.6, position = position_jitter(width = 0, height = 0.05))+
+  geom_line(data = pred, aes(x = period, y = Predicted, color=period), linewidth = 2)+
+  geom_ribbon(data = pred, aes(x = period, ymin = CI_low, ymax = CI_high, fill=period), alpha = 0.2) +
+  scale_color_manual(values=c("firebrick4", "dodgerblue3", "green", "pink"))+
+  scale_fill_manual(values=c("firebrick4", "dodgerblue3", "green", "pink"))+
+  facet_wrap(~period)+
+  ylab("Herd size")+
+  xlab("Incidence of plague")+
+  theme_classic()
+```
 
 
-
-
-
-
-
+*Question 4:* Use insects.csv to model the number of insects (count) as an additive function (no interaction) of habitat (categorical) and flowers (numerical). Previous studies have reported that habitat quality tends to drive the detection of insects (some habitats have no insects regardless of flowers). Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
 
 
 
