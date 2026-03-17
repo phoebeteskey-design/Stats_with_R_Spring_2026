@@ -65,6 +65,14 @@ beetles.rslopes3 <- lmer(
   log(Dry.Mass.mg) ~ Temp.C + (Temp.C | Species) + (1 | Sex),
   data = beetle)
 
+#Sex as fixed effect
+beetles.fixed_sex <- lmer(
+  log(Dry.Mass.mg) ~ Temp.C + Sex + (Temp.C | Species), 
+  data = beetle
+)
+
+summary(beetles.fixed_sex)
+
 summary(beetles.rslopes1)
 summary(beetles.rslopes2)
 summary(beetles.rslopes3)
