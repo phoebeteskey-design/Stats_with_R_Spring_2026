@@ -64,6 +64,10 @@ beetles.rslopes2 <- lmer(log(Dry.Mass.mg) ~ Temp.C + (Temp.C|Species:Sex), data 
 beetles.rslopes3 <- lmer(
   log(Dry.Mass.mg) ~ Temp.C + (Temp.C | Species) + (1 | Sex),
   data = beetle)
+
+summary(beetles.rslopes1)
+summary(beetles.rslopes2)
+summary(beetles.rslopes3)
 ```
 
 ```{r}
@@ -95,21 +99,7 @@ pred.rand <- estimate_relation(beetles.lmm2, include_random=TRUE)
 
 ggplot(beetle, aes(Temp.C, log(Dry.Mass.mg), color = Species)) +
   geom_point(aes(shape = Sex)) +
-  
-  geom_line(data = pred.rand,
-            aes(Temp.C, Predicted, group = Species),
-            alpha = 0.4) +
-  
-  geom_line(data = pred.mean,
-            aes(Temp.C, Predicted),
-            color = "black",
-            size = 1.3) +
-  
-  geom_ribbon(data = pred.mean,
-              aes(x=Temp.C, ymin = CI_low, ymax = CI_high),
-              fill = "grey70",
-              alpha = 0.3,
-              inherit.aes = FALSE) +
+  geom_smooth(aes(group = 1), method = "lm", color = "black", se = FALSE) +
   
   theme_classic()
 ```
