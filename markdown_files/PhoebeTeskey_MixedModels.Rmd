@@ -3,24 +3,53 @@ title: "PhoebeTeskey_MixedModels"
 output: html_document
 ---
 
+```{r}
+library(lme4)
+library(ggplot2)
+library(performance)
+library(easystats)
+library(emmeans)
+library(dplyr)
+```
+
+
+
 Mixed models
 
 1. Researchers at the University of Arizona want to assess the germination rate of saguaros using a factorial design, with 3 levels of soil type (remnant, cultivated and restored) and 2 levels of sterilization (yes or no). The same experimental design was deployed in 4 different greenhouses. Each of the unique treatments was replicated in 5 pots. 6 seeds were planted in each pot.
 
 a)	How many fixed treatments (unique combinations) exist?
 
+3 * 2 * 4 = 24 fixed treatments exist.
+
 b)	What is the total number of pots?
+
+24 * 5 = 120 pots
 
 c)	What is the total number of plants measured?
 
+120 * 6 = 720 plants measured
+
 d)	Write the R code that you would use to analyze these data.
 
-```{r}
+Columns would be named: Germination yes/no, soil type, sterilization yes/no, greenhouse, pot #, seedling #
+Dataframe would be called saguaro
 
-```
+I would use this model:
+model <- glmer(Germination ~ Soil * Sterilization + (1|Greenhouse), 
+               data = saguaro_data, 
+               family = binomial)
+               
+I would then simulate residuals and use this test:
+drop1(model, test = "Chisq)
+r2(model)
 
 
 2. Use Estuaries.csv to model the counts of invertebrate species (Total) between modified or pristine estuaries (Mod) including Estuary as random effects (only intercepts). Then fit the same model but now also including Site in the random effects. Select between both models parsimoniously. Communication your results (plot + description of main results).
+
+Results: Adding Site as a random effect nested within Estuary improved the model fit (p < 0.001, chi^2 = 60.7).
+
+Modification significantly influenced the total counts (p = 0.0194). The marginal R^2 explains 25% of the total variance, while the conditional R^2 explains 90% of the variance.
 
 
 ```{r}
@@ -37,7 +66,51 @@ anova(estuary.glm, estuary.glm.random, test = "LRT")
 r2(estuary.glm)
 r2(estuary.glm.random)
 
+estuary_means <- emmeans(estuary.glm.random, ~ Modification, type = "response")
+plot_data <- as.data.frame(estuary_means)
 
+ggplot(plot_data, aes(x = Modification, y = rate, fill = Modification)) +
+  geom_bar(stat = "identity", width = 0.6, color = "black") +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2) +
+  labs(y = "Total", x = "Estuary Type") +
+  theme_minimal()
+
+```
+
+3. Transform the counts of Hydroid to presence/absence data. Then model this variable as a function of Mod, fit the same 2 models as in the previous exercise, and select between both. Communication your results (plot + description of main results).
+
+Including Site as a random effect significantly improved model fit (chi^2 = 6.21, p = 0.013). The Modified/Pristine Estuary had a significant effect on Hydroid occurrence (z = 2.08, p = 0.037). Pristine sites had a higher probability of Hydroid presence compared to Modified sites.
+
+
+```{r}
+estuary$Presence <- (estuary$Hydroid > 0) + 0
+
+hydroid.glm <- glmer(Presence ~ Modification + (1|Estuary), 
+                     family = binomial(link = "logit"), data = estuary)
+
+hydroid.glm.random <- glmer(Presence ~ Modification + (1|Estuary) + (1|Estuary:Site), 
+                            family = binomial(link = "logit"), data = estuary)
+
+anova(hydroid.glm, hydroid.glm.random, test = "LRT")
+
+summary(hydroid.glm.random)
+
+hydroid_plot_data <- estuary %>%
+  group_by(Modification) %>%
+  summarize(
+    proportion = mean(Presence),
+    n = n(),
+    se = sqrt((proportion * (1 - proportion)) / n)
+  )
+
+ggplot(hydroid_plot_data, aes(x = Modification, y = proportion, fill = Modification)) +
+  geom_bar(stat = "identity", color = "black", width = 0.6) +
+  geom_errorbar(aes(ymin = pmax(0, proportion - se), 
+                    ymax = pmin(1, proportion + se)), 
+                width = 0.15) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(y = "Frequency of Presence (%)", x = "Estuary Status") +
+  theme_classic()
 
 ```
 
