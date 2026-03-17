@@ -1,0 +1,122 @@
+---
+title: "ENVS567-Beetles"
+author: "Kelsey Graves"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup 
+```{r, message = FALSE, warning = FALSE}
+library(easystats)
+library(data.table)
+library(readxl)
+library(ggplot2)
+library(reshape2)
+library(car)
+library(tidyverse)
+library(marginaleffects)
+library(GGally)
+library(DHARMa)
+library(MASS)
+library(lme4)
+library(glmmTMB)
+library(modelbased)
+```
+
+Question: 
+What is the effect of temperature on the weight of beetles accounting for variation in species and sex? 
+
+Explore Data: 
+```{r}
+beetle <- read.table("../data_raw/beetles.txt", header=TRUE)
+```
+
+```{r}
+ggplot(data=beetle, aes(x=Temp.C, y=Dry.Mass.mg)) + geom_point() + facet_wrap(~Sex)
+
+ggplot(data=beetle, aes(x=Temp.C, y=Dry.Mass.mg, color=Species)) + geom_boxplot()
+
+ggplot(data=beetle, aes(x=Temp.C, y=Dry.Mass.mg, color=Species)) + geom_boxplot() + facet_wrap(~Sex)
+
+ggplot(data=beetle, aes(x=Temp.C, y=Dry.Mass.mg, color=Sex)) + geom_boxplot() + facet_wrap(~Species)
+
+ggplot(data=beetle, aes(x=Species, y=Dry.Mass.mg, color=Sex)) + geom_point()
+
+ggplot(data=beetle, aes(x= Temp.C, y=Dry.Mass.mg, color=Species))+ geom_point() +geom_smooth(method="lm", se=F)
+```
+
+```{r}
+beetles.lmm <- lmer(data=beetle, log(Dry.Mass.mg) ~ Temp.C + (1|Species) + (1|Sex))
+
+beetles.lmm2 <- lmer(data=beetle, log(Dry.Mass.mg) ~ Temp.C * Species + (1|Sex))
+```
+
+```{r}
+#random slopes
+beetles.rslopes1 <- lmer(log(Dry.Mass.mg) ~ Temp.C + (Temp.C|Sex) + (Temp.C|Species), data = beetle)
+
+beetles.rslopes2 <- lmer(log(Dry.Mass.mg) ~ Temp.C + (Temp.C|Species:Sex), data = beetle)
+
+beetles.rslopes3 <- lmer(
+  log(Dry.Mass.mg) ~ Temp.C + (Temp.C | Species) + (1 | Sex),
+  data = beetle)
+```
+
+```{r}
+compare_performance(beetles.lmm, beetles.lmm2, beetles.rslopes1, beetles.rslopes2, beetles.rslopes3)
+```
+
+```{r}
+check_model(beetles.lmm2, check=c("linearity", "homogeneity", "normality"))
+```
+
+```{r}
+beetles.lmm2.ml <- lmer(data=beetle, log(Dry.Mass.mg) ~ Temp.C * Species + (1|Sex), REML=FALSE)
+summary(beetles.lmm2.ml)
+```
+
+```{r}
+drop1(beetles.lmm2.ml, test="Chisq")
+```
+
+```{r}
+r2(beetles.lmm2.ml)
+```
+
+```{r}
+pred.mean <- estimate_relation(beetles.lmm2)
+
+pred.rand <- estimate_relation(beetles.lmm2, include_random=TRUE)
+
+
+ggplot(beetle, aes(Temp.C, log(Dry.Mass.mg), color = Species)) +
+  geom_point(aes(shape = Sex)) +
+  
+  geom_line(data = pred.rand,
+            aes(Temp.C, Predicted, group = Species),
+            alpha = 0.4) +
+  
+  geom_line(data = pred.mean,
+            aes(Temp.C, Predicted),
+            color = "black",
+            size = 1.3) +
+  
+  geom_ribbon(data = pred.mean,
+              aes(x=Temp.C, ymin = CI_low, ymax = CI_high),
+              fill = "grey70",
+              alpha = 0.3,
+              inherit.aes = FALSE) +
+  
+  theme_classic()
+```
+
+Results:
+
+We found a significant interaction between Temperature and Species (p < 0.001), indicating that mass is dependent on both temperature and species. The coefficient of Temp.C (-0.013) indicates that as temperature increases, there is a slight decrease in mass. There are large differences between the baseline mass of the reference species (AB = e^1.788 = 5.977) and the other beetle species. The fixed effects of Temperature and Species account for 99.4% of variability in mass. Including the random effect Sex, the model accounts for 99.7% of variability in mass.
+
+
+
