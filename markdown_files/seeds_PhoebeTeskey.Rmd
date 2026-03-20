@@ -1,0 +1,62 @@
+---
+title: "seeds_PhoebeTeskey"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+```
+
+Question: What treatment increases average growth across 2 different species of plants?
+
+
+```{r}
+seeds <- read.csv("../data_raw/seeds.csv")
+head(seeds)
+```
+
+Looks like we have plants in shared pots, might need to control for that. 6 plants to 1 pot. 
+3 soil types; STP, CULT, REM.
+Sterile or nonsterile
+2 different species
+Germination or non-germination
+4 different measurements, on day 13, day 18, day 23 and day 28.
+
+May need to group data by each plant, there are 4 measurements per plant.
+Variables we care about are height, pot, plant, soil, sterile, species.
+
+```{r}
+#clean the data
+seeds_longer <- pivot_longer(seeds, cols = hgt13:hgt28, names_to = "day", values_to = "height")
+seeds_clean <- na.omit(seeds_longer)
+seeds_clean <- seeds_clean %>% mutate(across(where(is.character), as.factor))
+avg_growth_seeds <- seeds_clean %>% 
+  group_by(pot, plant, soil, sterile, species) %>% 
+  summarise(avg_growth = mean(height)) %>% 
+  ungroup()
+
+```
+
+
+```{r}
+#Explore data
+ggplot(avg_growth_seeds, aes(x = soil, y = avg_growth))+
+geom_point()+
+  facet_wrap(~species)
+
+ggplot(avg_growth_seeds, aes(x = sterile, y = avg_growth))+
+geom_point()+
+  facet_wrap(~species)
+
+```
+
+Treatents do appear to have an effect. 
+For species "C": avg_growth higher with sterile conditions, avg_growth increases with CULT, REM, STP soil in that order. 
+For species "L": avg_growth slightly higher with sterile conditions, no clear effect if any soil outperforms the other.
+We want to control for random effects from pot.
+
+```{r}
+
+```
+

@@ -53,6 +53,9 @@ ggplot(data=beetle, aes(x= Temp.C, y=Dry.Mass.mg, color=Species))+ geom_point() 
 beetles.lmm <- lmer(data=beetle, log(Dry.Mass.mg) ~ Temp.C + (1|Species) + (1|Sex))
 
 beetles.lmm2 <- lmer(data=beetle, log(Dry.Mass.mg) ~ Temp.C * Species + (1|Sex))
+
+summary(beetles.lmm)
+summary(beetles.lmm2)
 ```
 
 ```{r}
