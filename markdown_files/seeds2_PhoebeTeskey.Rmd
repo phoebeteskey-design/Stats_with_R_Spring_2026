@@ -1,0 +1,71 @@
+---
+title: "seeds2_PhoebeTeskey"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(lme4)
+library(performance)
+library(easystats)
+```
+
+I see a few questions here.
+
+Question 1: What treatments create the tallest plants across 2 different species?
+Question 2: Does soil type or sterility influence germination of 2 different species of plants?
+Question 3: Do different treatments increase the rate of a plant's growth over a fixed period of time?
+
+This document will investigate the 2nd question.
+
+```{r}
+seeds <- read.csv("../data_raw/seeds.csv")
+head(seeds)
+```
+
+Looks like we have plants in shared pots, will need to control for that. 6 plants to 1 pot. 
+3 soil types; STP, CULT, REM.
+Sterile or nonsterile
+2 different species
+Germination or non-germination
+4 different measurements, on day 13, day 18, day 23 and day 28.
+
+May need to group data by each plant, there are 4 measurements per plant.
+
+The response variable being measured this time is Germination Y/N. Possible interactions are soil type, sterility, and plant species.
+Fixed effect: pot
+Random effects: sterility, plant species and soil type
+
+We do NOT care about plant heights, yay!
+
+```{r}
+#clean_data
+seeds_factor <- seeds %>% mutate(across(where(is.character), as.factor))
+```
+
+
+
+```{r}
+#Explore data
+ggplot(seeds_factor, aes(x = germin))+
+geom_bar()+
+  facet_wrap(~species)
+
+ggplot(seeds_factor, aes(x = germin))+
+geom_bar()+
+  facet_wrap(~soil)
+
+ggplot(seeds_factor, aes(x = germin))+
+geom_bar()+
+  facet_wrap(~sterile)
+```
+Looks like a lot of variability. C species had a lot of germination, L species had similar numbers of germinated and non-germinated.
+STP soil had a lot of germination. REM and CULT were similar rates of germination and non-germination. 
+Sterile condition had big changes in both germinated and non-germinated.
+
+
+
+
+
+
+
