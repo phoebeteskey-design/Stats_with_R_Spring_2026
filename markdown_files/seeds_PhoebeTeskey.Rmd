@@ -5,11 +5,17 @@ output: html_document
 
 ```{r}
 library(tidyverse)
-
+library(lme4)
+library(performance)
+library(easystats)
 ```
+I see multiple questions here.
 
-Question: What treatment increases average growth across 2 different species of plants?
+Question 1: What treatments create the tallest plants across 2 different species?
+Question 2: Does soil type or sterility influence germination of 2 different species of plants?
+Question 3: Do different treatments increase the rate of a plant's growth over a fixed period of time?
 
+I will proceed with the first question.
 
 ```{r}
 seeds <- read.csv("../data_raw/seeds.csv")
@@ -28,35 +34,76 @@ Variables we care about are height, pot, plant, soil, sterile, species.
 
 ```{r}
 #clean the data
-seeds_longer <- pivot_longer(seeds, cols = hgt13:hgt28, names_to = "day", values_to = "height")
-seeds_clean <- na.omit(seeds_longer)
+seeds_clean <- na.omit(seeds)
 seeds_clean <- seeds_clean %>% mutate(across(where(is.character), as.factor))
-avg_growth_seeds <- seeds_clean %>% 
-  group_by(pot, plant, soil, sterile, species) %>% 
-  summarise(avg_growth = mean(height)) %>% 
-  ungroup()
 
 ```
 
 
 ```{r}
 #Explore data
-ggplot(avg_growth_seeds, aes(x = soil, y = avg_growth))+
+ggplot(seeds_clean, aes(x = sterile, y = hgt28))+
 geom_point()+
   facet_wrap(~species)
 
-ggplot(avg_growth_seeds, aes(x = sterile, y = avg_growth))+
+ggplot(seeds_clean, aes(x = soil, y = hgt28))+
 geom_point()+
   facet_wrap(~species)
 
 ```
 
-Treatents do appear to have an effect. 
-For species "C": avg_growth higher with sterile conditions, avg_growth increases with CULT, REM, STP soil in that order. 
-For species "L": avg_growth slightly higher with sterile conditions, no clear effect if any soil outperforms the other.
+Treatments do appear to have an effect. 
+For species "C": height28 higher with sterile conditions, height28 might increase with CULT, REM, STP soil in that order. Very tall outlier in REM.
+For species "L": height28 slightly higher with sterile conditions, CULT and STP soil seem to outperform REM.
+We want to test fixed effects of soil, species and sterile.
 We want to control for random effects from pot.
 
-```{r}
+I am choosing a LMM for this data because there are fixed and random effects. I want to know which treatments produced the tallest plants. I'm analyzing a single variable, height on day 28, but I need to account for multiple plants being in the same pot. I'm also testing for interactions between soil and species and sterile.
 
+```{r}
+seeds_lmer <- lmer(hgt28 ~ soil * species * sterile + (1|pot), data = seeds_clean)
+summary(seeds_lmer)
+```
+Reference soil: CULT
+Reference species: "C"
+The intercept 2.12 is the height that species C will get to in CULT soil with nonsterile.
+soilREM 0.69 means that C would grow 0.69 taller if it was in REM soil, nonsterile.
+soilSTP means that C would grow 0.1 higher if it was in STP soil, nonsterile.
+sterileY means that C would grow 2.08 higher if it was in CULT soil, nonsterile.
+speciesL means that L would grow 0.63 higher than C if it was in CULT soil, nonsterile.
+sterile y means that C would grow 2.08 higher if it was in CULT soil, sterile. The highest result.
+soilREM:speciesL means that L would grow 0.75 less than C in REM soil, nonsterile.
+soilSTP:speciesL means that L would grow 0.25 more than C in STP soil, nonsterile.
+soilREM:sterileY means that C would grow 1.94 less than C in CULT soil, nonsterile
+soilSTP:sterileY means that C would grow 0.25 more than C in CULT soil, nonsterile
+speciesL:sterileY means that L would grow 1.26 less than C in CULT soil, nonsterile
+soilREM:speciesL:sterileY means that L would grow 1.26 more than C in CULT soil, nonsterile
+soilSTP:speciesL:sterileY means that L would grow 0.27 less than C in CULT soil, nonsterile
+
+Standard deviation between pots was high 0.9161
+Residual error is high 0.48, error explained by pot differences
+
+From this we can tell that C in STP grew the tallest.
+
+```{r}
+check_model(seeds_lmer, check=c("linearity", "homogeneity", "normality"))
 ```
 
+```{r}
+seeds_lmer_ml <- lmer(hgt28 ~ soil * species + (1|pot), data = seeds_clean, REML = F)
+
+drop1(seeds_lmer_ml, test = "Chisq")
+
+r2(seeds_lmer)
+```
+
+```{r}
+estimate_contrasts(seeds_lmer)
+```
+The biggest difference was 0.87 between L in REM soil and L in STP soil.
+There is nothing statistically significant here. 
+The stdev between pots was very high, so it's possible that the pots are just very different in this experiment and that is what is causing the plants to grow shorter or taller.
+
+Results:
+
+Soil, sterile and species factors did not have a significant effect on plant height (chisq = 0.57, p-value = 0.75). 4.8% of variability was explained by fixed effects (pot). Species L showed a slight trend of increased height in STP soil compared to REM soil (diff = 0.87, p-value 0.07). Standard deviation was high among pots (0.9161), which likely interfered with treatment effects.
