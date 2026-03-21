@@ -107,3 +107,21 @@ The stdev between pots was very high, so it's possible that the pots are just ve
 Results:
 
 Soil, sterile and species factors did not have a significant effect on plant height (chisq = 0.57, p-value = 0.75). 4.8% of variability was explained by fixed effects (pot). Species L showed a slight trend of increased height in STP soil compared to REM soil (diff = 0.87, p-value 0.07). Standard deviation was high among pots (0.9161), which likely interfered with treatment effects.
+
+```{r}
+ggplot(seeds_clean, aes(x = soil, y = hgt28, color = species))+
+  geom_boxplot()+
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.75), alpha = 0.6)+
+  facet_wrap(~sterile, labeller = as_labeller(c("N" = "Nonsterile", "Y" = "Sterile")))+
+  labs(title = "Treatment Effect on Plant Height", x = "Soil Type", y = "Plant Height at 28 Days", color = "Plant Species")
+```
+
+
+
+
+
+
+
+
+
+
