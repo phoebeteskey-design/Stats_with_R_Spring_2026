@@ -588,7 +588,7 @@ summary(kudzu_anova)</code></pre>
 ## Residuals   15    105     7.0                     
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>This does not indicate a significant result.</p>
+<p>This indicates a significant result.</p>
 <p><em>Problem 6:</em> Testosterone is known to predict aggressive
 behavior and is involved in face shape during puberty. Researchers
 measured the face width-to-height ratio of 21 university hockey players
@@ -598,7 +598,7 @@ aggressive infractions. The data are available in face.txt.</p>
 <li>Calculate the correlation coefficient.</li>
 </ol>
 <pre class="r"><code>aggression &lt;- read.table(&quot;../data_raw/face.txt&quot;, header = T, sep = &quot;\t&quot;)
-cor(x = aggression$Face, y = aggression$Penalty)</code></pre>
+cor(x = aggression$Face, y = aggression$Penalty, method = &quot;pearson&quot;)</code></pre>
 <pre><code>## [1] 0.5368588</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Does face shape predict aggression? Write the result in the form of
@@ -625,6 +625,8 @@ summary(aggression_prediction)</code></pre>
 ## Multiple R-squared:  0.2882, Adjusted R-squared:  0.2508 
 ## F-statistic: 7.694 on 1 and 19 DF,  p-value: 0.0121</code></pre>
 <p>y = 3.189x - 4.505</p>
+<p>Face shape is significant in influencing aggression, but just barely
+(p value = 0.04)</p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>What is the variation explained?</li>
 </ol>

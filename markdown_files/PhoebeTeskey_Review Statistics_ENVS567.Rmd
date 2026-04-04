@@ -210,7 +210,7 @@ kudzu_anova <- aov(value~variable, kudzu_long)
 summary(kudzu_anova)
 ```
 
-This does not indicate a significant result.
+This indicates a significant result.
 
 *Problem 6:* Testosterone is known to predict aggressive behavior and is involved in face shape during puberty. Researchers measured the face width-to-height ratio of 21 university hockey players with the average number of penalty minutes awarded per game for aggressive infractions. The data are available in face.txt.
 
@@ -218,7 +218,7 @@ a)	Calculate the correlation coefficient.
 
 ```{r}
 aggression <- read.table("../data_raw/face.txt", header = T, sep = "\t")
-cor(x = aggression$Face, y = aggression$Penalty)
+cor(x = aggression$Face, y = aggression$Penalty, method = "pearson")
 ```
 
 b)	Does face shape predict aggression? Write the result in the form of an equation for the line.
@@ -226,9 +226,12 @@ b)	Does face shape predict aggression? Write the result in the form of an equati
 ```{r}
 aggression_prediction <- lm(Penalty ~ Face, data = aggression)
 summary(aggression_prediction)
+
 ```
 
 y = 3.189x - 4.505
+
+Face shape is significant in influencing aggression, but just barely (p value = 0.04)
 
 c)	What is the variation explained?
 
