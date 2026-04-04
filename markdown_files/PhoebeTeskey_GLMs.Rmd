@@ -12,14 +12,6 @@ library(lme4)
 library(glmmTMB)
 library(car)
 
-
-
-library(ecostats)
-library(GGally)
-
-library(parameters)
-library(performance)
-library(modelbased)
 ```
 
 
@@ -289,12 +281,6 @@ pred <- estimate_relation(insect_nbzi, length = 100)
 
 
 ggplot(pred, aes(x = flowers, y = Predicted)) +
-  
-  geom_ribbon(aes(ymin = CI_low, ymax = CI_high),
-              fill = "firebrick4",
-              alpha = 0.2) +
-  
-  geom_line(color = "firebrick4", linewidth = 1.5) +
   
   geom_point(data = insects,
              aes(x = flowers, y = count),
