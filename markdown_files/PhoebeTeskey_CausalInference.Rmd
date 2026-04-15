@@ -1,0 +1,127 @@
+---
+title: "PhoebeTeskey_CausalInference"
+output: html_document
+---
+
+```{r}
+library(dagitty)
+library(ggdag)
+install.packages("")
+
+
+```
+
+
+1. Researchers are interested in whether using mosquito nets (variable net) decreases an individual’s risk of contracting malaria (variable malaria_risk). They collected observational data in mosquito_nets.csv.
+
+a)	Fit a linear model using net as explanatory and malaria_risk as response.
+
+```{r}
+nets <- read.csv("../data_raw/mosquito_nets.csv")
+nets$net <- as.factor(nets$net)
+nets_lm <- lm(malaria_risk~net, data = nets)
+summary(nets_lm)
+```
+
+b)	Plot the DAG depicted in the slides using dagitty and library(ggdag), and find the minimal adjustment set.
+
+```{r}
+dag <- dagitty("
+dag {
+income -> net
+income -> malaria_risk
+income -> health
+net <- income
+net <- temperature
+net <- eligible
+net <- health
+net <- household
+net -> malaria_risk
+eligible <- income
+eligible <- household
+eligible -> net
+health -> malaria_risk
+resistance -> malaria_risk
+temperature -> malaria_risk
+}
+")
+
+ggdag(dag, text = TRUE, use_labels = "name") +
+  theme_dag()
+
+# Find minimal adjustment set
+adjustmentSets(dag, exposure = "net", outcome = "malaria_risk")
+```
+
+
+c)	Based on the previous DAG and minimal adjustment set, estimate the causal effect of bed net usage on malaria risk
+
+```{r}
+model_causal <- lm(malaria_risk ~ health + income + temperature + net, data = nets)
+
+summary(model_causal)
+```
+
+d)	Write the R code that you would use to analyze these data.
+
+Please see above.
+
+2. Use data(keeley) in library(piecewiseSEM) to build a structural equation model. This model should consist of abiotic favorability (abiotic) as a linear function of distance to coast (distance); fire severity (firesev) as a linear function of stand age (age); cover as a linear function of fire severity, and plant species richness (rich) as a linear function of distance, plot heterogeneity (hetero), abiotic and cover.
+
+```{r}
+
+```
+
+
+
+a)	Plot the SEM and use Fisher’s test of d-separation to assess goodness-of-fit. Are the assumed causal relationships consistent with the observed data? What is the explanatory power for the response variable of interest (plant species richness)?
+
+```{r}
+library(piecewiseSEM)
+library(semEff)
+data(keeley)
+keeley_psem <- psem(
+  lm(abiotic ~ distance, keeley),
+  lm(firesev ~ age, keeley),
+  lm(cover ~ firesev, keeley),
+  lm(rich ~ distance + hetero + abiotic + cover, keeley)
+)
+summary(keeley_psem)
+rsquared(keeley_psem)
+
+plot(keeley_psem, node_attrs = data.frame(shape = "rectangle", color = "black", fillcolor = "grey"),
+layout = "tree")
+
+
+```
+
+
+Fisher's C = 30.5, p value = 0.105
+P value is > 0.05, indicating that the assumed causal relationships are consistent with the observed data.
+R-squared for richness is 0.54, indicating that the model explains 54% of the variation in plant species richness.
+
+
+b)	Use library(semEff) to calculate the direct, indirect and total effects on the response variable of interest (plant species richness). Make a forest plot of the standardized total effects.
+
+
+```{r}
+keeley_psem.boot<-bootEff(keeley_psem, R = 500, parallel = "multicore")
+keeley_psem.eff<-semEff(keeley_psem.boot, data = keeley)
+summary(keeley_psem.eff, response = "rich")
+
+#this code will not run, tried multiple different things to fix and nothing worked
+# keeley_std <- stdEff(keeley_psem.eff)
+# 
+# forestPlot(keeley_std, 
+#            response = "rich",
+#            what = "total")
+# Error:
+# Error in nobs.default(m) : no 'nobs' method is available
+# Error in attr(x, "formula") %||% { : invalid formula
+
+```
+
+
+
+
+
