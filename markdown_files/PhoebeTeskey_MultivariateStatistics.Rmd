@@ -1,0 +1,111 @@
+---
+title: "PhoebeTeskey_MultivariateStatistics"
+output: html_document
+---
+
+```{r}
+
+library(vegan)
+
+
+```
+
+
+Multivariate statistics
+
+1. Use data(dune) and data(dune.env) from library(vegan) to create a Euclidean distance matrix after standardization using the first (A1), second (Moisture) and fifth (Manure) variables of dune.env. Then create a Bray-Curtis distance matrix using dune. Perform a Mantel test on both distance matrices.
+
+
+```{r}
+data("dune")
+data("dune.env")
+vare.env.sta<-decostand(dune, method="standardize")
+vare.env.euc<-vegdist(vare.env.sta, method="euclidean")
+vare.bio.bray<-vegdist(dune, method="bray")
+mantel(vare.bio.bray, vare.env.euc)
+```
+
+
+2. Use data(dune) to:
+
+a)	Make dendrograms of the results of hierarchical clustering using the single, average and complete methods after creating a Bray-Curtis distance matrix.
+
+
+```{r}
+vare.bio.bray<-vegdist(dune, method="bray")
+vare.bio.clust<-hclust(vare.bio.bray, method="average")
+
+plot(vare.bio.clust)
+```
+
+
+
+b)	Perform k-means partitions from 2 to 6 partitions and select the best partition using the Calinski criterion. Visualize the results.
+
+
+```{r}
+vare.bio.k<-cascadeKM(dune, inf.gr=2, sup.gr=6)
+plot(vare.bio.k, sortg=T)
+```
+
+
+3. Use data(dune) to:
+
+a)	Perform a nonmetric multidimensional scaling (NMDS) with data(dune) after calculating Bray-Curtis distances among sites. Plot the results including the stress value, the size of the points should be proportional to Shannon diversity, and the color should represent the variable Management in data(dune.env).
+
+
+```{r}
+vare.bio.nmds<-metaMDS(dune, distance="bray", k=2, trymax = 100)
+```
+
+```{r}
+vare.bio.nmds$stress
+```
+
+```{r}
+stressplot(vare.bio.nmds)
+```
+
+```{r}
+plot(vare.bio.nmds, type="t", display="sites")
+```
+
+```{r}
+#package GGalt has been archived and removed from the CRAN repository, used an ellipse instead
+
+library(see)
+library(ggplot2)
+
+shannon_dune <- diversity(dune, index="shannon")
+
+dune.sp <- cbind(as.data.frame(dune), 
+                Axis01 = vare.bio.nmds$points[,1], 
+                Axis02 = vare.bio.nmds$points[,2], 
+                Diversity = shannon_dune, 
+                Management = dune.env$Management)
+
+ggplot(data=dune.sp, aes(x=Axis01, y=Axis02, color=Management)) +
+  geom_point(aes(size=Diversity), alpha = 0.7) +
+  stat_ellipse(aes(fill = Management), geom = "polygon", alpha = 0.2, show.legend = FALSE) +
+  scale_size_continuous(range = c(2, 6)) +
+  scale_color_see() +
+  scale_fill_see() +
+  annotate("text", x = -0.4, y = 0.45, 
+           label = paste("Stress =", round(vare.bio.nmds$stress, 3))) +
+  labs(x="Axis 1", y="Axis 2") +
+  theme_classic(base_size = 14)
+```
+
+
+b)	Perform a permutational multivariate analysis of variance (PERMANOVA) with 9,999 permutations using the dune dataset after calculating Bray-Curtis distances and the first (A1), second (Moisture) and fifth (Manure) variables of dune.env as explanatory. Report which explanatory variables are significant and their explanatory power.
+
+```{r}
+perm_set <- dune.env[, c("A1", "Moisture", "Manure")]
+
+adonis_dune <- adonis2(dune ~ A1 + Moisture + Manure, data = perm_set, permutations = 9999, method = "bray", by = "terms")
+
+print(adonis_dune)
+```
+
+All 3 variables were significant. (p value < 0.05). Moisture has the highest explanatory power, explaining 27.6% of variability. Manure explains 25.2% of the variation, and A1 explains 16.8% of variation. Total, these 3 variables explain 69.6% of the variability between sites.
+
