@@ -1206,19 +1206,20 @@ b)  Use library(semEff) to calculate the direct, indirect and total
     richness). Make a forest plot of the standardized total effects.
 
 ```{r}
-keeley_psem.boot<-bootEff(keeley_psem, R = 500, parallel = "multicore")
-keeley_psem.eff<-semEff(keeley_psem.boot, data = keeley)
+keeley_psem.eff <- semEff(keeley_psem, R = 500)
+rich_eff <- getTotEffTable(keeley_psem.eff, response = "rich")
 summary(keeley_psem.eff, response = "rich")
 
-#this code will not run, tried multiple different things to fix and nothing worked
-# keeley_std <- stdEff(keeley_psem.eff)
-# 
-# forestPlot(keeley_std, 
-#            response = "rich",
-#            what = "total")
-# Error:
-# Error in nobs.default(m) : no 'nobs' method is available
-# Error in attr(x, "formula") %||% { : invalid formula
+#Still giving errors so I used ggplot to make the forest plot
+plot_data <- as.data.frame(rich_eff)
+plot_data$Variable <- rownames(plot_data)
+
+colnames(plot_data)
+
+ggplot(plot_data, aes(x = effect, y = Variable)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci), height = 0.2) +
+  geom_point(size = 3)
 
 ```
 
