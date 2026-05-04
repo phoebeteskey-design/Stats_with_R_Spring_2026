@@ -810,9 +810,9 @@ ggplot(plague, aes(x = incidence, y = period))+
 Fit Model
 
 ```{r}
-plague_glmm <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd), 
+plague_glmm <- glmer(incidence ~ period + (1 | herd) + offset(log(size)), 
                     data = plague, 
-                    family = binomial)
+                    family = poisson)
 summary(plague_glmm)
 ```
 
@@ -832,25 +832,25 @@ drop1(plague_glmm, test = "Chisq")
 r2(plague_glmm)
 ```
 
-Communicate Results: The model revealed a significant primary effect of
-period on disease incidence (chisq = 25.61, df = 3, p \< 0.001). All
-subsequent periods after baseline (Period 1) showed a marked reduction
-in the probability of infection.
+Communicate Results: A GLMM with Poisson distribution log and an offset
+for herd size revealed that period had a signigicant effect on plague
+incidence (chisq = 22.51, df = 3, p\<0.001).
 
 ```{r}
-pred <- estimate_relation(plague_glmm) #modelbased
-pred.farm <- estimate_relation(plague_glmm, include_random = T)
+pred <- estimate_relation(plague_glmm, at = "period", offset = 0)
+pred.farm <- estimate_relation(plague_glmm, at = c("period", "herd"), offset = 0
 
-ggplot(pred.farm, aes(x=herd, y=Predicted, group=period))+
-  geom_line(color="darkgrey", alpha=0.6)+
-  geom_point(data = plague, aes(x=herd, y=size, color = period), size=0.9, alpha=0.6, position = position_jitter(width = 0, height = 0.05))+
-  geom_line(data = pred, aes(x = period, y = Predicted, color=period), linewidth = 2)+
-  geom_ribbon(data = pred, aes(x = period, ymin = CI_low, ymax = CI_high, fill=period), alpha = 0.2) +
+ggplot(pred.farm, aes(x = period, y = Predicted, group = herd)) +
+  geom_line(color = "darkgrey", alpha = 0.4) +
+  geom_point(data = plague, aes(x = period, y = incidence / size, color = period),
+             size = 1.5, alpha = 0.6, position = position_jitter(width = 0.1))+
+  geom_line(data = pred, aes(x = period, y = Predicted, group = 1),
+            color = "black", linewidth = 1.5)+
+  geom_ribbon(data = pred, aes(x = period, ymin = CI_low, ymax = CI_high,
+                               fill= "grey"), alpha = 0.2) +
   scale_color_manual(values=c("firebrick4", "dodgerblue3", "green", "pink"))+
-  scale_fill_manual(values=c("firebrick4", "dodgerblue3", "green", "pink"))+
-  facet_wrap(~period)+
-  ylab("Herd size")+
-  xlab("Incidence of plague")+
+  labs(title = "Plague Incidence Rate by Period", x = "Period",
+       y = "Incidence of Plague rate")+
   theme_classic()
 ```
 
@@ -945,11 +945,13 @@ significant predictor of insect count (p \< 0.001). The model explained
 
 ```{r}
 
-pred <- estimate_relation(insect_nbzi, length = 100)
+pred <- estimate_relation(insect_nbzi, at = c("flowers", "habitat"), length = 100)
 
 
-ggplot(pred, aes(x = flowers, y = Predicted)) +
-  
+ggplot(pred, aes(x = flowers, y = Predicted)) +  
+    geom_line(aes(group = 1), color = "blue", linewidth = 1) +
+  geom_ribbon(aes(ymin = CI_low, ymax = CI_high, group = 1), alpha = 0.2, fill = "blue") +
+
   geom_point(data = insects,
              aes(x = flowers, y = count),
              color = "black",
