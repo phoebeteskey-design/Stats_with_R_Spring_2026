@@ -1327,12 +1327,13 @@ b)  Perform a permutational multivariate analysis of variance
 ```{r}
 perm_set <- dune.env[, c("A1", "Moisture", "Manure")]
 
-adonis_dune <- adonis2(dune ~ A1 + Moisture + Manure, data = perm_set, permutations = 9999, method = "bray", by = "terms")
+adonis_dune <- adonis2(dune ~ A1 + Moisture + Manure, data = perm_set, permutations = 9999, method = "bray", by = "margin")
 
 print(adonis_dune)
 ```
 
-All 3 variables were significant. (p value \< 0.05). Moisture has the
-highest explanatory power, explaining 27.6% of variability. Manure
-explains 25.2% of the variation, and A1 explains 16.8% of variation.
+Results indicate that Moisture and Manure have significant effects (p \<
+0.01), while variable A1 was not significant. (p = 0.1927). Manure has
+the highest explanatory power, explaining 25.2% of variability. Moisture
+explains 22.1% of the variation, and A1 explains 4.1% of variation.
 Total, these 3 variables explain 69.6% of the variability between sites.
