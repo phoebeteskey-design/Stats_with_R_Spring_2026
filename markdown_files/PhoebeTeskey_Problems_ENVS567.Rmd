@@ -1,9 +1,13 @@
 ---
-title: "PhoebeTeskey_Problems_ENVS567"
-author: "Phoebe Teskey"
-date: "2026-01-22"
-output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
+------------------------------------------------------------------------
+
+title: "PhoebeTeskey_Problems_ENVS567" author: "Phoebe Teskey" date:
+"2026-01-22" output: html_document
 
 ```{r}
 library(ggplot2)
@@ -15,15 +19,23 @@ library(reshape2)
 
 *Problem 1*
 
-1. Under highly favorable conditions, populations grow exponentially. However resources will eventually limit population growth and exponential growth cannot continue indefinitely. This phenomenon is described by the logistic growth function:
+1.  Under highly favorable conditions, populations grow exponentially.
+    However resources will eventually limit population growth and
+    exponential growth cannot continue indefinitely. This phenomenon is
+    described by the logistic growth function:
 
-N_t=(KN_0)/〖N_0+(K-N_0)e〗^(-rt) 
+N_t=(KN_0)/〖N_0+(K-N_0)e〗\^(-rt)
 
-where Nt is the population size at time t, N0 is the initial population size, r is the rate of growth or reproductive rate, and K is the carrying capacity.
+where Nt is the population size at time t, N0 is the initial population
+size, r is the rate of growth or reproductive rate, and K is the
+carrying capacity.
 
-Write a logistic growth function in R that also generates a plot with time on the x axis and Nt on the y axis. Using that function create 3 separate plots for 20 days assuming an initial population size of 10 individuals and a carrying capacity of 1,000 individuals under 3 growth rate scenarios (0.5, 0.8, 0.4).
-Plot the previous results (that is, 3 growth rate scenarios) in a single plot using ggplot2.
-
+Write a logistic growth function in R that also generates a plot with
+time on the x axis and Nt on the y axis. Using that function create 3
+separate plots for 20 days assuming an initial population size of 10
+individuals and a carrying capacity of 1,000 individuals under 3 growth
+rate scenarios (0.5, 0.8, 0.4). Plot the previous results (that is, 3
+growth rate scenarios) in a single plot using ggplot2.
 
 ```{r}
 
@@ -79,8 +91,9 @@ ggplot(all_results, aes(x = time, y = Nt, color = r)) +
 
 *Problem 2*
 
-a)	A function (sum_n) that for any given value, say n, computes the sum of the integers from 1 to n (inclusive). Use the function to determine the sum of integers from 1 to 5,000.
-
+a)  A function (sum_n) that for any given value, say n, computes the sum
+    of the integers from 1 to n (inclusive). Use the function to
+    determine the sum of integers from 1 to 5,000.
 
 ```{r}
 n <- 1:5000
@@ -93,7 +106,10 @@ sum_n <- function(n){
 sum_n(n)
 
 ```
-b)	A function (sqrt_round) that takes a number x as input, takes the square root, rounds it to the nearest whole number and then returns the result.
+
+b)  A function (sqrt_round) that takes a number x as input, takes the
+    square root, rounds it to the nearest whole number and then returns
+    the result.
 
 ```{r}
 sqrt_round <- function(x) {
@@ -107,49 +123,63 @@ sqrt_round(13)
 
 # Review of Statistics
 
-*Problem 1*: The data in the file DesertBirdAbundance.csv are from a survey of the breeding birds of Organ Pipe Cactus National Monument in southern Arizona.
+*Problem 1*: The data in the file DesertBirdAbundance.csv are from a
+survey of the breeding birds of Organ Pipe Cactus National Monument in
+southern Arizona.
 
 Draw a histogram of the data.
 
 ```{r}
 birds <- read.csv("../data_raw/DesertBirdAbundance.csv")
 str(birds)
-birds_plot <- ggplot(birds, aes(x = species, y= abundance))+
-  geom_col()+
-  coord_flip()
+birds_plot <- ggplot(birds, aes(x = abundance))+
+  geom_histogram()
 plot(birds_plot)
 ```
 
-Calculate the median and the mean. In this particular case, which do you think is the best measure of center, the mean or the median? Why?
+Calculate the median and the mean. In this particular case, which do you
+think is the best measure of center, the mean or the median? Why?
 
 ```{r}
 mean(birds$abundance)
 median(birds$abundance)
 ```
 
-In this case, the median is a more accurate representation of the data because we have outliers like the white-winged dove that was seen over 600 times. 
+In this case, the median is a more accurate representation of the data
+because we have outliers like the white-winged dove that was seen over
+600 times.
 
-*Problem 2*: Normal human body temperature is 98.6 ºF. Researchers obtained body-temperature measurements on randomly chosen healthy people: 98.4, 98.6, 97.8, 98.8, 97.9, 99.0, 98.2, 98.8, 98.8, 99.0, 98.0, 99.2, 99.5, 99.4, 98.4, 99.1, 98.4, 97.6, 97.4, 97.5, 97.5, 98.8, 98.6, 100.0, 98.4.
+*Problem 2*: Normal human body temperature is 98.6 ºF. Researchers
+obtained body-temperature measurements on randomly chosen healthy
+people: 98.4, 98.6, 97.8, 98.8, 97.9, 99.0, 98.2, 98.8, 98.8, 99.0,
+98.0, 99.2, 99.5, 99.4, 98.4, 99.1, 98.4, 97.6, 97.4, 97.5, 97.5, 98.8,
+98.6, 100.0, 98.4.
 
-a)	Draw a histogram of the data.
+a)  Draw a histogram of the data.
 
 ```{r}
 healthy_temps <- c(98.4, 98.6, 97.8, 98.8, 97.9, 99.0, 98.2, 98.8, 98.8, 99.0, 98.0, 99.2, 99.5, 99.4, 98.4, 99.1, 98.4, 97.6, 97.4, 97.5, 97.5, 98.8, 98.6, 100.0, 98.4)
 
-plot(healthy_temps)
+hist(healthy_temps)
 ```
 
-
-b)	Are these measurements consistent with a population mean of 98.6 ºF?
-The mean is close to 98.6 but not exact at 98.5
+b)  Are these measurements consistent with a population mean of 98.6 ºF?
 
 ```{r}
-mean(healthy_temps)
+temp_test <- t.test(healthy_temps, mu = 98.6)
+print(temp_test)
 ```
 
-The mean is close to 98.6 but not exact at 98.5
+There is not a significant difference between the mean of healthy_temps
+and the population mean of 98.6 The confidence interval indicates that
+the true population mean lies between 98.2 and 98.8. Therefore, yes,
+these measurements are consistent with the population mean of 98.6
 
-*Problem 3*: The brown recluse spider often lives in houses throughout central North America. A diet-preference study gave each of 41 spiders a choice between two crickets, one live and one dead. 31 of the 41 spiders chose the dead cricket over the live one. Does this represent evidence for a diet preference?
+*Problem 3*: The brown recluse spider often lives in houses throughout
+central North America. A diet-preference study gave each of 41 spiders a
+choice between two crickets, one live and one dead. 31 of the 41 spiders
+chose the dead cricket over the live one. Does this represent evidence
+for a diet preference?
 
 ```{r}
 binom.test(31, 41, p = 0.5)
@@ -157,29 +187,48 @@ binom.test(31, 41, p = 0.5)
 
 Yes, this is a significant result.
 
-*Problem 4:* A bee biologist is analyzing whether there was an association between bee colony number and type of forest habitat. We expect that there is no habitat preference for bee colony number. Make a barplot of the data and assess if no habitat preference is true based on this data?
+*Problem 4:* A bee biologist is analyzing whether there was an
+association between bee colony number and type of forest habitat. We
+expect that there is no habitat preference for bee colony number. Make a
+barplot of the data and assess if no habitat preference is true based on
+this data?
 
 ```{r}
 tree <- c("oak", "hickory", "maple", "red cedar", "poplar")
 bee_colonies <- c(33, 30, 29, 4, 4)
 tree_bee <- data.frame(x = tree, y = bee_colonies)
 
+chisq_result <- chisq.test(bee_colonies)
+print(chisq_result)
+
 ggplot(tree_bee, aes(x = tree, y = bee_colonies))+
   geom_col()
 ```
 
-There clearly seems to be a habitat preference for oak, maple and hickory trees.
+There clearly seems to be a habitat preference for oak, maple and
+hickory trees. The chi-sqared test confirms that this distribution is
+not normal (p-value \< 0.05).
 
-*Problem 5:* You are hired by the US Department of Agriculture to develop effective control practices for invasive plants (data_ANOVA.xlsx). In particular, you are asked to investigate pesticide controls for kudzu which is an invasive vine that grows in thick mats that smother underlying plants. Two of the most widely used pesticides for kudzu are glyphosate and triclopyr. To determine the effectiveness of a single application of pesticide, you conduct an experiment in 18 plots that each had 50% kudzu cover. In mid-summer, you applied equal amounts of 2% glyphosate to 6 plots, 2% triclopyr to 6 plots, and water without pesticides to 6 plots. Then you returned in autumn and measured the percent cover of kudzu in the plots.
+*Problem 5:* You are hired by the US Department of Agriculture to
+develop effective control practices for invasive plants
+(data_ANOVA.xlsx). In particular, you are asked to investigate pesticide
+controls for kudzu which is an invasive vine that grows in thick mats
+that smother underlying plants. Two of the most widely used pesticides
+for kudzu are glyphosate and triclopyr. To determine the effectiveness
+of a single application of pesticide, you conduct an experiment in 18
+plots that each had 50% kudzu cover. In mid-summer, you applied equal
+amounts of 2% glyphosate to 6 plots, 2% triclopyr to 6 plots, and water
+without pesticides to 6 plots. Then you returned in autumn and measured
+the percent cover of kudzu in the plots.
 
-a)	Transform the data from wide to long format.
+a)  Transform the data from wide to long format.
 
 ```{r}
 kudzu <- read.csv("../data_raw/data_ANOVA.csv")
 kudzu_long <- melt(kudzu)
 ```
 
-b)	Make a boxplot and perform an ANOVA.
+b)  Make a boxplot and perform an ANOVA.
 
 ```{r}
 ggplot(kudzu_long, aes(x = variable, y = value))+
@@ -190,16 +239,21 @@ summary(kudzu_anova)
 
 This indicates a significant result.
 
-*Problem 6:* Testosterone is known to predict aggressive behavior and is involved in face shape during puberty. Researchers measured the face width-to-height ratio of 21 university hockey players with the average number of penalty minutes awarded per game for aggressive infractions. The data are available in face.txt.
+*Problem 6:* Testosterone is known to predict aggressive behavior and is
+involved in face shape during puberty. Researchers measured the face
+width-to-height ratio of 21 university hockey players with the average
+number of penalty minutes awarded per game for aggressive infractions.
+The data are available in face.txt.
 
-a)	Calculate the correlation coefficient.
+a)  Calculate the correlation coefficient.
 
 ```{r}
 aggression <- read.table("../data_raw/face.txt", header = T, sep = "\t")
 cor(x = aggression$Face, y = aggression$Penalty, method = "pearson")
 ```
 
-b)	Does face shape predict aggression? Write the result in the form of an equation for the line.
+b)  Does face shape predict aggression? Write the result in the form of
+    an equation for the line.
 
 ```{r}
 aggression_prediction <- lm(Penalty ~ Face, data = aggression)
@@ -209,13 +263,17 @@ summary(aggression_prediction)
 
 y = 3.189x - 4.505
 
-Face shape is significant in influencing aggression, but just barely (p value = 0.04)
+Face shape is significant in influencing aggression, but just barely (p
+value = 0.04)
 
-c)	What is the variation explained?
+c)  What is the variation explained?
 
-The variation explained is represented by the R^2 value, which is .29. This means that about 29% of the variation in penalty minutes can be explained by the face width-to-height ratio.
+The variation explained is represented by the R\^2 value, which is .29.
+This means that about 29% of the variation in penalty minutes can be
+explained by the face width-to-height ratio.
 
-d)	Make a scatterplot of the data and include the linear regression line in the plot.
+d)  Make a scatterplot of the data and include the linear regression
+    line in the plot.
 
 ```{r}
 ggplot(aggression, aes(x = Face, y = Penalty))+
@@ -223,9 +281,7 @@ ggplot(aggression, aes(x = Face, y = Penalty))+
   geom_smooth(method = "lm", se = T)
 ```
 
-
 # Linear and Non-Linear Models
-
 
 ```{r}
 library(easystats)
@@ -237,10 +293,17 @@ library(GGally)
 library(car)
 ```
 
+*Question 1:* Data in growth.txt come from a farm-scale trial of animal
+diets. There are two factors: diet and supplement. Diet is a factor with
+three levels: barley, oats and wheat. Supplement is a factor with four
+levels: agrimore, control, supergain and supersupp. The response
+variable is weight gain after 6 weeks. Analyze the data following this
+structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4.
+Validate model, 5. Test hypothesis and assess explanatory power, and 6.
+Communication of results (plot + description of main results).
 
-*Question 1:* Data in growth.txt come from a farm-scale trial of animal diets. There are two factors: diet and supplement. Diet is a factor with three levels: barley, oats and wheat. Supplement is a factor with four levels: agrimore, control, supergain and supersupp. The response variable is weight gain after 6 weeks. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
-
-Question: What diet and supplement increases weight in mice after 6 weeks?
+Question: What diet and supplement increases weight in mice after 6
+weeks?
 
 ```{r}
 #Exploratory analyses
@@ -262,7 +325,6 @@ summary(model3)
 
 ```
 
-
 ```{r}
 #Validate model
 
@@ -278,7 +340,6 @@ anova(model3)
 
 ```
 
-
 ```{r}
 #r^2
 r2(model3)
@@ -287,7 +348,12 @@ r2(model3)
 
 Communication of results (plot + description of main results):
 
-No significant interaction between diet and supplement. The effect of the supplements was consistent across diets. Type of diet was significant, (F2,36 = 83.52, p < 0.001) and the barley diet had a higher gain than barley or wheat. The supplement was also significant, (F3,36 = 17.8, p < 0.001). The model accounted for 82% of the variance in weight gain, (R2 = 0.82) with standard error at 1.31.
+No significant interaction between diet and supplement. The effect of
+the supplements was consistent across diets. Type of diet was
+significant, (F2,36 = 83.52, p \< 0.001) and the barley diet had a
+higher gain than barley or wheat. The supplement was also significant,
+(F3,36 = 17.8, p \< 0.001). The model accounted for 82% of the variance
+in weight gain, (R2 = 0.82) with standard error at 1.31.
 
 ```{r}
 model3.means <- estimate_means(model3)
@@ -304,10 +370,12 @@ ggplot(data = model3.means, aes(x = diet, y = Mean, color=supplement)) +
   theme_classic()
 ```
 
-*Question 2:*
-Respiratory rate (Y) is expected to depend on body mass (X) by the power law, Y=aX, where  is the scaling exponent. The data are available in respiratoryrate_bodymass.txt.
+*Question 2:* Respiratory rate (Y) is expected to depend on body mass
+(X) by the power law, Y=aX, where  is the scaling exponent. The data
+are available in respiratoryrate_bodymass.txt.
 
-a)	Analyze the data by transforming the data and then fit a linear model.
+a)  Analyze the data by transforming the data and then fit a linear
+    model.
 
 ```{r}
 breathe <- read.table("../data_raw/respiratoryrate_bodymass.txt", header = T)
@@ -319,7 +387,8 @@ summary(fit.log)
 
 ```
 
-For every 1% increase in body mass, the respiratory rate increases by approximately 0.86%
+For every 1% increase in body mass, the respiratory rate increases by
+approximately 0.86%
 
 ```{r}
 ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
@@ -329,7 +398,6 @@ ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
   theme_classic()
 ```
 
-
 ```{r}
 ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
   geom_point()+
@@ -337,13 +405,13 @@ ggplot(data = breathe, aes(x=Respiration, y=BodyMass))+
   theme_classic()
 ```
 
+*Question 3:* Use the diminish.txt data (xv is explanatory
+(independent), yv is response variable (dependent)) to perform a simple
+linear regression and a polynomial (second-degree) regression.
 
-*Question 3:* Use the diminish.txt data (xv is explanatory (independent), yv is response variable (dependent)) to perform a simple linear regression and a polynomial (second-degree) regression.
+a)  Compare both models and decide which model seems to be better?
 
-a)	Compare both models and decide which model seems to be better?
-
-b)	Make a scatterplot and include both regression lines.
-
+b)  Make a scatterplot and include both regression lines.
 
 ```{r}
 diminish <- read.table("../data_raw/diminish.txt", header = T)
@@ -370,17 +438,18 @@ ggplot(data=diminish, aes(x=xv, y=yv))+
   theme_classic()
 ```
 
+*Question 4* Use the ozone.txt data to model the ozone concentration as
+a linear additive (no interactions) function of wind speed, air
+temperature and the intensity of solar radiation.
 
-*Question 4* Use the ozone.txt data to model the ozone concentration as a linear additive (no interactions) function of wind speed, air temperature and the intensity of solar radiation.
-
-a)	Make a pairwise scatterplot and assess the collinearity of the explanatory variables
+a)  Make a pairwise scatterplot and assess the collinearity of the
+    explanatory variables
 
 ```{r}
 ozone <- read.table("../data_raw/ozone.txt", header = T)
 
 ggpairs(ozone)
 ```
-
 
 ```{r}
 ozone.lm <- lm(ozone ~ rad+temp+wind, data=ozone)
@@ -395,52 +464,53 @@ check_model(ozone.lm, check=c("linearity", "homogeneity", "normality"))
 check_collinearity(ozone.lm)
 ```
 
-
 ```{r}
 plot(check_collinearity(ozone.lm))
 ```
-
 
 ```{r}
 anova(ozone.lm)
 ```
 
-
 ```{r}
 anova(lm(ozone ~ wind+rad+temp, data=ozone))
 ```
-
 
 ```{r}
 anova(lm(ozone ~ wind+temp+rad, data=ozone))
 ```
 
-
 ```{r}
 Anova(ozone.lm, type = 2)
 ```
-
 
 ```{r}
 r2(ozone.lm)
 ```
 
-We explored the linear relationships between Ozone, Radiation, Wind and Temperature. Temperature and Radiation variables were positively associated with higher ozone levels (p-values < 0.05). Overall, our multiple regression model explained 60% (adjusted R2) of the variability in Ozone levels.
-
+We explored the linear relationships between Ozone, Radiation, Wind and
+Temperature. Temperature and Radiation variables were positively
+associated with higher ozone levels (p-values \< 0.05). Overall, our
+multiple regression model explained 60% (adjusted R2) of the variability
+in Ozone levels.
 
 ```{r}
 plot(parameters(ozone.lm))
 ```
 
-
 ```{r}
 plot(parameters(ozone.lm, standardize = "refit"))
 ```
 
+*Question 5:* Use data(CO2) and assess the effects of the variables
+Treatment (categorical) and conc (ambient concentration, numerical) on
+the response uptake. Analyze the data following this structure: 1.
+Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5.
+Test hypothesis and assess explanatory power, and 6. Communication of
+results (plot + description of main results).
 
-*Question 5:* Use data(CO2) and assess the effects of the variables Treatment (categorical) and conc (ambient concentration, numerical) on the response uptake. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
-
-Question: Does ambient concentration of CO2 and treatment type affect uptake of CO2 in plants?
+Question: Does ambient concentration of CO2 and treatment type affect
+uptake of CO2 in plants?
 
 ```{r}
 #Exploratory analyses
@@ -452,7 +522,6 @@ ggplot(CO2, aes(x = uptake, y = conc, color = Treatment)) +
 
 ```
 
-
 ```{r}
 #Fit model
 
@@ -460,7 +529,6 @@ model4 <- lm(uptake ~ Treatment * conc, data = CO2)
 summary(model4)
 
 ```
-
 
 ```{r}
 #Validate model
@@ -470,14 +538,12 @@ check_model(model4, check=c("linearity", "homogeneity", "normality"))
 
 ```
 
-
 ```{r}
 #Test hypothesis and assess explanatory power
 
 anova(model4)
 
 ```
-
 
 ```{r}
 Anova(model4)
@@ -487,9 +553,14 @@ Anova(model4)
 r2(model4)
 ```
 
-Communicate Results:
-There was not enough evidence of different relationships between concentration of CO2 and uptake of CO2 among treatment types (F1,80 = 0.4, p-value = 0.5297). The chilled treatment type have on average 5 less units of CO2 than the nonchilled treatment type (F1,80 = 74.1267, p-value < 0.001). There was a positive relationship between concentration of CO2 and uptake of CO2 (b = 0.0198, F1, 80 = 28.5535, p value < 0.001).  Overall, the model explained 31% of the variance in uptake of CO2.
-
+Communicate Results: There was not enough evidence of different
+relationships between concentration of CO2 and uptake of CO2 among
+treatment types (F1,80 = 0.4, p-value = 0.5297). The chilled treatment
+type have on average 5 less units of CO2 than the nonchilled treatment
+type (F1,80 = 74.1267, p-value \< 0.001). There was a positive
+relationship between concentration of CO2 and uptake of CO2 (b = 0.0198,
+F1, 80 = 28.5535, p value \< 0.001). Overall, the model explained 31% of
+the variance in uptake of CO2.
 
 ```{r}
 #Communicate results with a plot
@@ -502,19 +573,19 @@ ggplot(CO2, aes(y=uptake, x=conc, color=Treatment))+
   theme_classic()
 ```
 
-
 *Question 6*: Use the jaws.txt data (age explanatory, bone response).
 
-	Perform a non-linear regression assuming an asymptotic exponential relationship: y=a(1-e^(-cx))
+```         
+Perform a non-linear regression assuming an asymptotic exponential relationship: y=a(1-e^(-cx))
 
-	Perform a non-linear regression assuming a Michaelis-Menten model: y=ax/(1+bx)
+Perform a non-linear regression assuming a Michaelis-Menten model: y=ax/(1+bx)
 
-	Estimate the percentage of variation explained by both models (comparing them with a null model with only a constant).
+Estimate the percentage of variation explained by both models (comparing them with a null model with only a constant).
 
-	Compare both models using AIC.
+Compare both models using AIC.
 
-	Make a scatterplot of the data and include both regression lines.
-
+Make a scatterplot of the data and include both regression lines.
+```
 
 ```{r}
 jaws <- read.table("../data_raw/jaws.txt", header = T)
@@ -523,11 +594,9 @@ jaws.asymp<-nls(bone~a*age/(b+age), start=list(a=100, b=0.1), data=jaws)
 summary(jaws.asymp)
 ```
 
-
 ```{r}
 summary(nls(bone ~ SSmicmen(age, a, b), data=jaws))
 ```
-
 
 ```{r}
 rss<-13.9^2*51 # residual sum of squares
@@ -536,13 +605,11 @@ null<-lm(bone~1, data=jaws) # null model with only a constant
 summary(null)
 ```
 
-
 ```{r}
 tss<-31.01^2*52 # total sum of squares
 
 100*(tss-rss)/tss
 ```
-
 
 ```{r}
 fit_mm <- nls(bone ~ a * age / (1 + b * age), 
@@ -555,7 +622,6 @@ aic_mm <- AIC(fit_mm)
 summary(aic_asymp)
 summary(aic_mm)
 ```
-
 
 ```{r}
 
@@ -579,18 +645,22 @@ ggplot(jaws, aes(x = age, y = bone)) +
   theme_minimal()
 ```
 
-
 # GLMs
-
 
 ```{r}
 library(glmmTMB)
 ```
 
+*Problem 1* The data in stork.txt display the stress-induced
+corticosterone levels circulating in the blood of European white storks
+and their survival over the subsequent five years of study. Analyze the
+data following this structure: 1. Question, 2. Exploratory analyses, 3.
+Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory
+power, and 6. Communication of results (plot + description of main
+results).
 
-*Problem 1* The data in stork.txt display the stress-induced corticosterone levels circulating in the blood of European white storks and their survival over the subsequent five years of study. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
-
-Question: Does corticosterone level predict survival of European white storks over a period of 5 years?
+Question: Does corticosterone level predict survival of European white
+storks over a period of 5 years?
 
 ```{r}
 #Exploratory analyses
@@ -625,8 +695,9 @@ anova(stork.glm, test = "LRT")
 r2(stork.glm)
 ```
 
-Communicate results:
-Animals with lower corticosterone levels have a higher rate of survival (-0.07980, Chisq = 3.8382, p-value 0.0501). The model explained 10% of the variance.
+Communicate results: Animals with lower corticosterone levels have a
+higher rate of survival (-0.07980, Chisq = 3.8382, p-value 0.0501). The
+model explained 10% of the variance.
 
 ```{r}
 ggplot(aes(x=Corticosterone, y=Survival), data=stork)+
@@ -635,10 +706,16 @@ ggplot(aes(x=Corticosterone, y=Survival), data=stork)+
   theme_classic()
 ```
 
+*Problem 2* The clusters.txt dataset contains the response variable
+Cancers (the number of reported cancer cases per clinic) and the
+explanatory variable Distance (the distance from a nuclear plant to the
+clinic in kilometers). Analyze the data following this structure: 1.
+Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5.
+Test hypothesis and assess explanatory power, and 6. Communication of
+results (plot + description of main results).
 
-*Problem 2* The clusters.txt dataset contains the response variable Cancers (the number of reported cancer cases per clinic) and the explanatory variable Distance (the distance from a nuclear plant to the clinic in kilometers). Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
-
-1.) Question: Do cancer cases occur more often closer to a nuclear power plant?
+1.) Question: Do cancer cases occur more often closer to a nuclear power
+plant?
 
 ```{r}
 #2.) Exploratory analyses
@@ -693,8 +770,11 @@ r2(cancer.nb)
 
 Communicate Results:
 
-There is no significant relationship between number of cancer cases and distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19). The model explained 2.7% of the variance. Based on these results, we cannot conclude that living closer to a power plant increases the number of reported cancer cases.
-
+There is no significant relationship between number of cancer cases and
+distance from a nuclear power plant. (Chisq = 1.6741, p value 0.19). The
+model explained 2.7% of the variance. Based on these results, we cannot
+conclude that living closer to a power plant increases the number of
+reported cancer cases.
 
 ```{r}
 ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
@@ -704,9 +784,15 @@ ggplot(data = cancer, aes(x = Distance, y = Cancers)) +
   theme_classic()
 ```
 
-*Question 3* Use data(cbpp) from library(lme4) to model the number of cases of cattle plague (incidence) as a function of period. Control for herd size in your model. Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
+*Question 3* Use data(cbpp) from library(lme4) to model the number of
+cases of cattle plague (incidence) as a function of period. Control for
+herd size in your model. Analyze the data following this structure: 1.
+Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5.
+Test hypothesis and assess explanatory power, and 6. Communication of
+results (plot + description of main results).
 
-Question: Is the number of cases of cattle plague influenced by time period or herd size?
+Question: Is the number of cases of cattle plague influenced by time
+period or herd size?
 
 ```{r}
 #Exploratory analyses
@@ -721,6 +807,7 @@ ggplot(plague, aes(x = incidence, y = period))+
 ```
 
 Fit Model
+
 ```{r}
 plague_glmm <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd), 
                     data = plague, 
@@ -729,6 +816,7 @@ summary(plague_glmm)
 ```
 
 Validate Model
+
 ```{r}
 simulateResiduals(plague_glmm, plot = T)
 ```
@@ -743,7 +831,10 @@ drop1(plague_glmm, test = "Chisq")
 r2(plague_glmm)
 ```
 
-Communicate Results: The model revealed a significant primary effect of period on disease incidence (chisq = 25.61, df = 3, p < 0.001). All subsequent periods after baseline (Period 1) showed a marked reduction in the probability of infection.
+Communicate Results: The model revealed a significant primary effect of
+period on disease incidence (chisq = 25.61, df = 3, p \< 0.001). All
+subsequent periods after baseline (Period 1) showed a marked reduction
+in the probability of infection.
 
 ```{r}
 pred <- estimate_relation(plague_glmm) #modelbased
@@ -762,10 +853,17 @@ ggplot(pred.farm, aes(x=herd, y=Predicted, group=period))+
   theme_classic()
 ```
 
+*Question 4* Use insects.csv to model the number of insects (count) as
+an additive function (no interaction) of habitat (categorical) and
+flowers (numerical). Previous studies have reported that habitat quality
+tends to drive the detection of insects (some habitats have no insects
+regardless of flowers). Analyze the data following this structure: 1.
+Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5.
+Test hypothesis and assess explanatory power, and 6. Communication of
+results (plot + description of main results).
 
-*Question 4* Use insects.csv to model the number of insects (count) as an additive function (no interaction) of habitat (categorical) and flowers (numerical). Previous studies have reported that habitat quality tends to drive the detection of insects (some habitats have no insects regardless of flowers). Analyze the data following this structure: 1. Question, 2. Exploratory analyses, 3. Fit model, 4. Validate model, 5. Test hypothesis and assess explanatory power, and 6. Communication of results (plot + description of main results).
-
-Question: Is the number of insects counted correlated with habitat type and number of flowers present?
+Question: Is the number of insects counted correlated with habitat type
+and number of flowers present?
 
 ```{r}
 #Exploratory analyses
@@ -777,7 +875,6 @@ ggplot(insects, aes(x = flowers, y = count)) +
   geom_point(alpha = 0.6) +
   facet_wrap(~habitat)
 ```
-
 
 Fit Model
 
@@ -799,7 +896,6 @@ simulateResiduals(insect.model, plot = T)
 testDispersion(insect.model, plot = T)
 ```
 
-
 ```{r}
 insect.nb <- glm.nb(count ~ habitat + flowers, data = insects)
 summary(insect.nb)
@@ -808,7 +904,6 @@ summary(insect.nb)
 ```{r}
 simulateResiduals(insect.nb, plot = T)
 ```
-
 
 ```{r}
 testDispersion(insect.nb, plot = T)
@@ -827,13 +922,11 @@ testDispersion(insect_nbzi, plot = T)
 simulateResiduals(insect_nbzi, plot = T)
 ```
 
-
 Test hypotheses and assess explanatory power:
 
 ```{r}
 drop1(insect_nbzi, test = "Chisq")
 ```
-
 
 ```{r}
 Anova(insect_nbzi, type = 2, test = "Chisq")
@@ -843,8 +936,11 @@ Anova(insect_nbzi, type = 2, test = "Chisq")
 r2(insect_nbzi)
 ```
 
-Communicate Results: Insect abundance varied significantly as a function of both habitat type and flower abundance. Habitat had a significant effect on insect counts (p < 0.001). Flower abundance was also a significant predictor of insect count (p < 0.001). The model explained 96% of the variability in insect count.
-
+Communicate Results: Insect abundance varied significantly as a function
+of both habitat type and flower abundance. Habitat had a significant
+effect on insect counts (p \< 0.001). Flower abundance was also a
+significant predictor of insect count (p \< 0.001). The model explained
+96% of the variability in insect count.
 
 ```{r}
 
@@ -867,9 +963,7 @@ ggplot(pred, aes(x = flowers, y = Predicted)) +
   theme_classic()
 ```
 
-
 # Mixed Models
-
 
 ```{r}
 library(performance)
@@ -877,42 +971,49 @@ library(emmeans)
 library(dplyr)
 ```
 
+*Problem 1* Researchers at the University of Arizona want to assess the
+germination rate of saguaros using a factorial design, with 3 levels of
+soil type (remnant, cultivated and restored) and 2 levels of
+sterilization (yes or no). The same experimental design was deployed in
+4 different greenhouses. Each of the unique treatments was replicated in
+5 pots. 6 seeds were planted in each pot.
 
-*Problem 1* Researchers at the University of Arizona want to assess the germination rate of saguaros using a factorial design, with 3 levels of soil type (remnant, cultivated and restored) and 2 levels of sterilization (yes or no). The same experimental design was deployed in 4 different greenhouses. Each of the unique treatments was replicated in 5 pots. 6 seeds were planted in each pot.
+a)  How many fixed treatments (unique combinations) exist?
 
-a)	How many fixed treatments (unique combinations) exist?
+3 \* 2 \* 4 = 24 fixed treatments exist.
 
-3 * 2 * 4 = 24 fixed treatments exist.
+b)  What is the total number of pots?
 
-b)	What is the total number of pots?
+24 \* 5 = 120 pots
 
-24 * 5 = 120 pots
+c)  What is the total number of plants measured?
 
-c)	What is the total number of plants measured?
+120 \* 6 = 720 plants measured
 
-120 * 6 = 720 plants measured
+d)  Write the R code that you would use to analyze these data.
 
-d)	Write the R code that you would use to analyze these data.
+Columns would be named: Germination yes/no, soil type, sterilization
+yes/no, greenhouse, pot #, seedling \# Dataframe would be called saguaro
 
-Columns would be named: Germination yes/no, soil type, sterilization yes/no, greenhouse, pot #, seedling #
-Dataframe would be called saguaro
+I would use this model: model \<- glmer(Germination \~ Soil \*
+Sterilization + (1\|Greenhouse), data = saguaro_data, family = binomial)
 
-I would use this model:
-model <- glmer(Germination ~ Soil * Sterilization + (1|Greenhouse), 
-               data = saguaro_data, 
-               family = binomial)
-               
-I would then simulate residuals and use this test:
-drop1(model, test = "Chisq)
-r2(model)
+I would then simulate residuals and use this test: drop1(model, test =
+"Chisq) r2(model)
 
+*Problem 2* Use Estuaries.csv to model the counts of invertebrate
+species (Total) between modified or pristine estuaries (Mod) including
+Estuary as random effects (only intercepts). Then fit the same model but
+now also including Site in the random effects. Select between both
+models parsimoniously. Communication your results (plot + description of
+main results).
 
-*Problem 2* Use Estuaries.csv to model the counts of invertebrate species (Total) between modified or pristine estuaries (Mod) including Estuary as random effects (only intercepts). Then fit the same model but now also including Site in the random effects. Select between both models parsimoniously. Communication your results (plot + description of main results).
+Results: Adding Site as a random effect nested within Estuary improved
+the model fit (p \< 0.001, chi\^2 = 60.7).
 
-Results: Adding Site as a random effect nested within Estuary improved the model fit (p < 0.001, chi^2 = 60.7).
-
-Modification significantly influenced the total counts (p = 0.0194). The marginal R^2 explains 25% of the total variance, while the conditional R^2 explains 90% of the variance.
-
+Modification significantly influenced the total counts (p = 0.0194). The
+marginal R\^2 explains 25% of the total variance, while the conditional
+R\^2 explains 90% of the variance.
 
 ```{r}
 
@@ -939,10 +1040,16 @@ ggplot(plot_data, aes(x = Modification, y = rate, fill = Modification)) +
 
 ```
 
-*Problem 3* Transform the counts of Hydroid to presence/absence data. Then model this variable as a function of Mod, fit the same 2 models as in the previous exercise, and select between both. Communication your results (plot + description of main results).
+*Problem 3* Transform the counts of Hydroid to presence/absence data.
+Then model this variable as a function of Mod, fit the same 2 models as
+in the previous exercise, and select between both. Communication your
+results (plot + description of main results).
 
-Including Site as a random effect significantly improved model fit (chi^2 = 6.21, p = 0.013). The Modified/Pristine Estuary had a significant effect on Hydroid occurrence (z = 2.08, p = 0.037). Pristine sites had a higher probability of Hydroid presence compared to Modified sites.
-
+Including Site as a random effect significantly improved model fit
+(chi\^2 = 6.21, p = 0.013). The Modified/Pristine Estuary had a
+significant effect on Hydroid occurrence (z = 2.08, p = 0.037). Pristine
+sites had a higher probability of Hydroid presence compared to Modified
+sites.
 
 ```{r}
 estuary$Presence <- (estuary$Hydroid > 0) + 0
@@ -976,18 +1083,20 @@ ggplot(hydroid_plot_data, aes(x = Modification, y = proportion, fill = Modificat
 
 ```
 
-
 #Causal Inference
-
 
 ```{r}
 library(dagitty)
 library(ggdag)
 ```
 
-*Problem 1* Researchers are interested in whether using mosquito nets (variable net) decreases an individual’s risk of contracting malaria (variable malaria_risk). They collected observational data in mosquito_nets.csv.
+*Problem 1* Researchers are interested in whether using mosquito nets
+(variable net) decreases an individual’s risk of contracting malaria
+(variable malaria_risk). They collected observational data in
+mosquito_nets.csv.
 
-a)	Fit a linear model using net as explanatory and malaria_risk as response.
+a)  Fit a linear model using net as explanatory and malaria_risk as
+    response.
 
 ```{r}
 nets <- read.csv("../data_raw/mosquito_nets.csv")
@@ -996,7 +1105,8 @@ nets_lm <- lm(malaria_risk~net, data = nets)
 summary(nets_lm)
 ```
 
-b)	Plot the DAG depicted in the slides using dagitty and library(ggdag), and find the minimal adjustment set.
+b)  Plot the DAG depicted in the slides using dagitty and
+    library(ggdag), and find the minimal adjustment set.
 
 ```{r}
 dag <- dagitty("
@@ -1026,7 +1136,8 @@ ggdag(dag, text = TRUE, use_labels = "name") +
 adjustmentSets(dag, exposure = "net", outcome = "malaria_risk")
 ```
 
-c)	Based on the previous DAG and minimal adjustment set, estimate the causal effect of bed net usage on malaria risk
+c)  Based on the previous DAG and minimal adjustment set, estimate the
+    causal effect of bed net usage on malaria risk
 
 ```{r}
 model_causal <- lm(malaria_risk ~ health + income + temperature + net, data = nets)
@@ -1034,14 +1145,22 @@ model_causal <- lm(malaria_risk ~ health + income + temperature + net, data = ne
 summary(model_causal)
 ```
 
-d)	Write the R code that you would use to analyze these data.
+d)  Write the R code that you would use to analyze these data.
 
 Please see above.
 
-*Problem 2* Use data(keeley) in library(piecewiseSEM) to build a structural equation model. This model should consist of abiotic favorability (abiotic) as a linear function of distance to coast (distance); fire severity (firesev) as a linear function of stand age (age); cover as a linear function of fire severity, and plant species richness (rich) as a linear function of distance, plot heterogeneity (hetero), abiotic and cover.
+*Problem 2* Use data(keeley) in library(piecewiseSEM) to build a
+structural equation model. This model should consist of abiotic
+favorability (abiotic) as a linear function of distance to coast
+(distance); fire severity (firesev) as a linear function of stand age
+(age); cover as a linear function of fire severity, and plant species
+richness (rich) as a linear function of distance, plot heterogeneity
+(hetero), abiotic and cover.
 
-
-a)	Plot the SEM and use Fisher’s test of d-separation to assess goodness-of-fit. Are the assumed causal relationships consistent with the observed data? What is the explanatory power for the response variable of interest (plant species richness)?
+a)  Plot the SEM and use Fisher’s test of d-separation to assess
+    goodness-of-fit. Are the assumed causal relationships consistent
+    with the observed data? What is the explanatory power for the
+    response variable of interest (plant species richness)?
 
 ```{r}
 library(piecewiseSEM)
@@ -1062,14 +1181,14 @@ layout = "tree")
 
 ```
 
+Fisher's C = 30.5, p value = 0.105 P value is \> 0.05, indicating that
+the assumed causal relationships are consistent with the observed data.
+R-squared for richness is 0.54, indicating that the model explains 54%
+of the variation in plant species richness.
 
-Fisher's C = 30.5, p value = 0.105
-P value is > 0.05, indicating that the assumed causal relationships are consistent with the observed data.
-R-squared for richness is 0.54, indicating that the model explains 54% of the variation in plant species richness.
-
-
-b)	Use library(semEff) to calculate the direct, indirect and total effects on the response variable of interest (plant species richness). Make a forest plot of the standardized total effects.
-
+b)  Use library(semEff) to calculate the direct, indirect and total
+    effects on the response variable of interest (plant species
+    richness). Make a forest plot of the standardized total effects.
 
 ```{r}
 keeley_psem.boot<-bootEff(keeley_psem, R = 500, parallel = "multicore")
@@ -1088,19 +1207,19 @@ summary(keeley_psem.eff, response = "rich")
 
 ```
 
-
 # Multivariate Statistics
-
 
 ```{r}
 library(vegan)
 ```
 
-
 # Multivariate statistics
 
-*Problem 1* Use data(dune) and data(dune.env) from library(vegan) to create a Euclidean distance matrix after standardization using the first (A1), second (Moisture) and fifth (Manure) variables of dune.env. Then create a Bray-Curtis distance matrix using dune. Perform a Mantel test on both distance matrices.
-
+*Problem 1* Use data(dune) and data(dune.env) from library(vegan) to
+create a Euclidean distance matrix after standardization using the first
+(A1), second (Moisture) and fifth (Manure) variables of dune.env. Then
+create a Bray-Curtis distance matrix using dune. Perform a Mantel test
+on both distance matrices.
 
 ```{r}
 data("dune")
@@ -1111,11 +1230,11 @@ vare.bio.bray<-vegdist(dune, method="bray")
 mantel(vare.bio.bray, vare.env.euc)
 ```
 
-
 *Problem 2* Use data(dune) to:
 
-a)	Make dendrograms of the results of hierarchical clustering using the single, average and complete methods after creating a Bray-Curtis distance matrix.
-
+a)  Make dendrograms of the results of hierarchical clustering using the
+    single, average and complete methods after creating a Bray-Curtis
+    distance matrix.
 
 ```{r}
 vare.bio.bray<-vegdist(dune, method="bray")
@@ -1124,21 +1243,21 @@ vare.bio.clust<-hclust(vare.bio.bray, method="average")
 plot(vare.bio.clust)
 ```
 
-
-
-b)	Perform k-means partitions from 2 to 6 partitions and select the best partition using the Calinski criterion. Visualize the results.
-
+b)  Perform k-means partitions from 2 to 6 partitions and select the
+    best partition using the Calinski criterion. Visualize the results.
 
 ```{r}
 vare.bio.k<-cascadeKM(dune, inf.gr=2, sup.gr=6)
 plot(vare.bio.k, sortg=T)
 ```
 
-
 *Problem 3* Use data(dune) to:
 
-a)	Perform a nonmetric multidimensional scaling (NMDS) with data(dune) after calculating Bray-Curtis distances among sites. Plot the results including the stress value, the size of the points should be proportional to Shannon diversity, and the color should represent the variable Management in data(dune.env).
-
+a)  Perform a nonmetric multidimensional scaling (NMDS) with data(dune)
+    after calculating Bray-Curtis distances among sites. Plot the
+    results including the stress value, the size of the points should be
+    proportional to Shannon diversity, and the color should represent
+    the variable Management in data(dune.env).
 
 ```{r}
 vare.bio.nmds<-metaMDS(dune, distance="bray", k=2, trymax = 100)
@@ -1182,8 +1301,12 @@ ggplot(data=dune.sp, aes(x=Axis01, y=Axis02, color=Management)) +
   theme_classic(base_size = 14)
 ```
 
-
-b)	Perform a permutational multivariate analysis of variance (PERMANOVA) with 9,999 permutations using the dune dataset after calculating Bray-Curtis distances and the first (A1), second (Moisture) and fifth (Manure) variables of dune.env as explanatory. Report which explanatory variables are significant and their explanatory power.
+b)  Perform a permutational multivariate analysis of variance
+    (PERMANOVA) with 9,999 permutations using the dune dataset after
+    calculating Bray-Curtis distances and the first (A1), second
+    (Moisture) and fifth (Manure) variables of dune.env as explanatory.
+    Report which explanatory variables are significant and their
+    explanatory power.
 
 ```{r}
 perm_set <- dune.env[, c("A1", "Moisture", "Manure")]
@@ -1193,6 +1316,7 @@ adonis_dune <- adonis2(dune ~ A1 + Moisture + Manure, data = perm_set, permutati
 print(adonis_dune)
 ```
 
-All 3 variables were significant. (p value < 0.05). Moisture has the highest explanatory power, explaining 27.6% of variability. Manure explains 25.2% of the variation, and A1 explains 16.8% of variation. Total, these 3 variables explain 69.6% of the variability between sites.
-
-
+All 3 variables were significant. (p value \< 0.05). Moisture has the
+highest explanatory power, explaining 27.6% of variability. Manure
+explains 25.2% of the variation, and A1 explains 16.8% of variation.
+Total, these 3 variables explain 69.6% of the variability between sites.
