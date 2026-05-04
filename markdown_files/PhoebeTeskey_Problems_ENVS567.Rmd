@@ -1,6 +1,6 @@
 ---
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -838,7 +838,7 @@ incidence (chisq = 22.51, df = 3, p\<0.001).
 
 ```{r}
 pred <- estimate_relation(plague_glmm, at = "period", offset = 0)
-pred.farm <- estimate_relation(plague_glmm, at = c("period", "herd"), offset = 0
+pred.farm <- estimate_relation(plague_glmm, at = c("period", "herd"), offset = 0)
 
 ggplot(pred.farm, aes(x = period, y = Predicted, group = herd)) +
   geom_line(color = "darkgrey", alpha = 0.4) +
