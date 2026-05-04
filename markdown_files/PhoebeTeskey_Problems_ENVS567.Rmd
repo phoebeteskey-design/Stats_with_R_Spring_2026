@@ -590,7 +590,8 @@ Make a scatterplot of the data and include both regression lines.
 ```{r}
 jaws <- read.table("../data_raw/jaws.txt", header = T)
 
-jaws.asymp<-nls(bone~a*age/(b+age), start=list(a=100, b=0.1), data=jaws)
+jaws.asymp<-nls(bone~a*(1-exp(-c * age)), data=jaws,
+                start = list(a = 120, c = 0.05))
 summary(jaws.asymp)
 ```
 
